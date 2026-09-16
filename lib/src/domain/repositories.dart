@@ -1,0 +1,1 @@
+export 'package:app_recoleccion_residuos/src/domain/repositories/auth_repository.dart';

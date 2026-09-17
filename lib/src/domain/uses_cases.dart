@@ -2,6 +2,7 @@
 // AUTH
 // =======================================
 export 'package:app_recoleccion_residuos/src/domain/use_cases/auth/auth_use_cases/ClearUserSessionUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/auth/auth_use_cases/GetProfileMeUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/auth/auth_use_cases/GetRefreshTokenUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/auth/auth_use_cases/GetTokenUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/auth/auth_use_cases/GetUserSessionUC.dart';

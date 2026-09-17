@@ -95,6 +95,7 @@ abstract class Appmodule {
     login: LoginUC(authRepository),
     logoutSession: LogoutUC(authRepository),
     saveUserSession: SaveUserSessionUC(authRepository),
+    getProfileMeUC: GetProfileMeUC(authRepository),
   );
 
   // =============================================================

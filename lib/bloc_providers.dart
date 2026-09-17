@@ -42,4 +42,11 @@ List<BlocProvider> blocProviders = [
   BlocProvider<LogoutBloc>(
     create: (context) => LogoutBloc(sessionBloc: context.read<SessionBloc>()),
   ),
+
+  // *********************************************************
+  // 5. PERFIL
+  // *********************************************************
+  BlocProvider<PerfilBloc>(
+    create: (context) => PerfilBloc(locator<AuthUsesCases>()),
+  ),
 ];

@@ -18,10 +18,11 @@ import 'package:app_recoleccion_residuos/src/data/models/models.dart';
 
 class AuthService with ChangeNotifier {
   // APIS
-  String get API_BASE => url_backend.Environment.mainUrl;
+  String get API_BASE => '${url_backend.Environment.mainUrl}/auth';
 
-  String get API_LOGIN => '$API_BASE/auth/login';
-  String get API_LOGOUT => '$API_BASE/auth/logout';
+  String get API_LOGIN => '$API_BASE/login';
+  String get API_LOGOUT => '$API_BASE/logout';
+  String get API_PROFILE_ME => '$API_BASE/me';
 
   // *********************************************************
   // 1. LOGIN - INICIAR SESIÓN
@@ -74,6 +75,7 @@ class AuthService with ChangeNotifier {
   // *********************************************************
   Future<Resource<ApiResponse<LogoutDataModel>>> logout({
     required String token,
+    required LogoutRequest request,
   }) async {
     try {
       // 1. CONSTRUIR URL
@@ -81,7 +83,11 @@ class AuthService with ChangeNotifier {
 
       // 2. PETICIÓN HTTP
       final response = await http
-          .post(uri, headers: HttpServiceHelper.getHeaders(token: token))
+          .post(
+            uri,
+            headers: HttpServiceHelper.getHeaders(token: token),
+            body: jsonEncode(request.toJson()),
+          )
           .timeout(const Duration(seconds: 30));
 
       final body = HttpServiceHelper.decodeResponse(response);
@@ -105,6 +111,48 @@ class AuthService with ChangeNotifier {
       );
     } catch (error) {
       return ErrorData<ApiResponse<LogoutDataModel>>(
+        message: 'Ocurrió un error al cerrar la sesión.',
+        error: error.toString(),
+      );
+    }
+  }
+
+  // *********************************************************
+  // 3. OBTENER PERFIL DEL USUARIO AUTENTICADO
+  // *********************************************************
+  Future<Resource<ApiResponse<UsuarioDataModel>>> getProfileMe({
+    required String token,
+  }) async {
+    try {
+      // 1. CONSTRUIR URL
+      final uri = Uri.parse(API_PROFILE_ME);
+
+      // 2. PETICIÓN HTTP
+      final response = await http
+          .get(uri, headers: HttpServiceHelper.getHeaders(token: token))
+          .timeout(const Duration(seconds: 30));
+
+      final body = HttpServiceHelper.decodeResponse(response);
+
+      // 3. RESPUESTA EXITOSA
+      if (HttpServiceHelper.isSuccess(response.statusCode)) {
+        final apiResponse = ApiResponse<UsuarioDataModel>.fromJson(
+          body,
+          (rawData) => UsuarioDataModel.fromJson(
+            Map<String, dynamic>.from(rawData as Map),
+          ),
+        );
+
+        return Success<ApiResponse<UsuarioDataModel>>(apiResponse);
+      }
+
+      // 4. RESPUESTA DE ERROR
+      return HttpServiceHelper.buildError<ApiResponse<UsuarioDataModel>>(
+        body,
+        response.statusCode,
+      );
+    } catch (error) {
+      return ErrorData<ApiResponse<UsuarioDataModel>>(
         message: 'Ocurrió un error al cerrar la sesión.',
         error: error.toString(),
       );

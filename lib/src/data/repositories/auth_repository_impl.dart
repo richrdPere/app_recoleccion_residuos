@@ -87,7 +87,33 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Resource<ApiResponse<LogoutDataModel>>> logout({
     required String token,
   }) async {
-    return await _authService.logout(token: token);
+    try {
+      final session = await getUserSession();
+
+      final accessToken = session?.accessToken.trim();
+      final refreshToken = token.trim();
+
+      if (accessToken == null || accessToken.isEmpty) {
+        return ErrorData<ApiResponse<LogoutDataModel>>(
+          message: 'No se encontró el token de acceso.',
+        );
+      }
+
+      if (refreshToken.isEmpty) {
+        return ErrorData<ApiResponse<LogoutDataModel>>(
+          message: 'No se encontró el token de renovación.',
+        );
+      }
+
+      return await _authService.logout(
+        token: accessToken,
+        request: LogoutRequest(refreshToken: refreshToken),
+      );
+    } catch (_) {
+      return ErrorData<ApiResponse<LogoutDataModel>>(
+        message: 'Ocurrió un error al procesar el cierre de sesión.',
+      );
+    }
   }
 
   // *********************************************************
@@ -118,5 +144,22 @@ class AuthRepositoryImpl implements AuthRepository {
     }
 
     return refreshToken;
+  }
+
+  // *********************************************************
+  // 8. OBTENER PERFIL DEL USUARIO AUTENTICADO
+  // *********************************************************
+  @override
+  Future<Resource<ApiResponse<UsuarioDataModel>>> getProfileMe() async {
+    final session = await getUserSession();
+    final token = session?.accessToken.trim();
+
+    if (token == null || token.isEmpty) {
+      return ErrorData<ApiResponse<UsuarioDataModel>>(
+        message: 'No existe una sesión iniciada.',
+      );
+    }
+
+    return await _authService.getProfileMe(token: token);
   }
 }

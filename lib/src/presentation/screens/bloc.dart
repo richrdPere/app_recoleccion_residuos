@@ -22,3 +22,8 @@ export 'package:app_recoleccion_residuos/src/presentation/shared/screens/loading
 export 'package:app_recoleccion_residuos/src/presentation/shared/screens/logout/bloc/logout_bloc.dart';
 export 'package:app_recoleccion_residuos/src/presentation/shared/screens/logout/bloc/logout_event.dart';
 export 'package:app_recoleccion_residuos/src/presentation/shared/screens/logout/bloc/logout_state.dart';
+
+// Perfil
+export 'package:app_recoleccion_residuos/src/presentation/screens/perfil/bloc/perfil_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/perfil/bloc/perfil_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/perfil/bloc/perfil_state.dart';

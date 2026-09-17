@@ -27,8 +27,6 @@ abstract class AuthRepository {
   /// 7. OBTENER REFRESH TOKEN
   Future<String?> getRefreshToken();
 
-  /// 8. REGISTRAR USUARIO
-  // Future<Resource<ApiResponse<LoginDataModel>>> register({
-  //   required UserEntity user,
-  // });
+  /// 8. OBTENER PERFIL USUARIO
+  Future<Resource<ApiResponse<UsuarioDataModel>>> getProfileMe();
 }

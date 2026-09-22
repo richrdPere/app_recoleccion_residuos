@@ -3,16 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:app_recoleccion_residuos/src/data/models/common/api_response.dart';
-import 'package:app_recoleccion_residuos/src/data/models/recolecciones/capacidad/capacidad_recorrido_data_model.dart';
-import 'package:app_recoleccion_residuos/src/data/models/recolecciones/detalle/recoleccion_detalle_data_model.dart';
-import 'package:app_recoleccion_residuos/src/data/models/recolecciones/evidencias/recoleccion_evidencia_data_model.dart';
-import 'package:app_recoleccion_residuos/src/data/models/recolecciones/evidencias/registrar_evidencia_req.dart';
-import 'package:app_recoleccion_residuos/src/data/models/recolecciones/progreso_recorrido/recorrido_progreso_data_model.dart';
-import 'package:app_recoleccion_residuos/src/data/models/recolecciones/puntos_recorrido/punto_recorrido_data_model.dart';
-import 'package:app_recoleccion_residuos/src/data/models/recolecciones/registrar_recoleccion/registrar_recoleccion_req.dart';
-import 'package:app_recoleccion_residuos/src/data/models/recolecciones/registrar_recoleccion_lote/registrar_recoleccion_lote_data_model.dart';
-import 'package:app_recoleccion_residuos/src/data/models/recolecciones/registrar_recoleccion_lote/registrar_recoleccion_lote_req.dart';
+
 import 'package:http/http.dart' as http;
 
 // Environment
@@ -25,6 +16,7 @@ import 'package:app_recoleccion_residuos/src/domain/utils/resource.dart';
 import 'package:http_parser/http_parser.dart';
 
 // Models
+import 'package:app_recoleccion_residuos/src/data/models/models.dart';
 
 class RecoleccionService {
   // APIS

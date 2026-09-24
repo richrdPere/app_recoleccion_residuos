@@ -73,6 +73,24 @@ abstract class Appmodule {
   @injectable // Auth
   AuthService get authService => AuthService();
 
+  @injectable // Dispositivos
+  DispositivosService get dispositivoService => DispositivosService();
+
+  @injectable // Notificaciones
+  NotificacionesService get notificacionesService => NotificacionesService();
+
+  @injectable // Programaciones
+  ProgramacionesService get programacionesService => ProgramacionesService();
+
+  @injectable // Recoleccion
+  RecoleccionService get recoleccionService => RecoleccionService();
+
+  @injectable // Recorrido
+  RecorridoService get recorridoService => RecorridoService();
+
+  @injectable // Tracking
+  TrackingService get trackingService => TrackingService();
+
   // =============================================================
   // 2. REPOSITORY
   // =============================================================
@@ -82,9 +100,40 @@ abstract class Appmodule {
   AuthRepository get authRepository =>
       AuthRepositoryImpl(authService, sharedPref);
 
+  // - Dispositivos
+  @injectable
+  DispositivoRepository get dispositivoRepository =>
+      DispositivoRepositoryImpl(dispositivoService, authRepository);
+
+  // - Notificaciones
+  @injectable
+  NotificacionesRepository get notificacionesRepository =>
+      NotificacionesRepositoryImpl(notificacionesService, authRepository);
+
+  // - Programaciones
+  @injectable
+  ProgramacionesRepository get programacionesRepository =>
+      ProgramacionesRepositoryImpl(programacionesService, authRepository);
+
+  // - Recoleccion
+  @injectable
+  RecoleccionRepository get recoleccionRepository =>
+      RecoleccionRepositoryImpl(recoleccionService, authRepository);
+
+  // - Recorrido
+  @injectable
+  RecorridoRepository get recorridoRepository =>
+      RecorridoRepositoryImpl(recorridoService, authRepository);
+
+  // - Tracking
+  @injectable
+  TrackingRepository get trackingRepository =>
+      TrackingRepositoryImpl(trackingService, authRepository);
+
   // =============================================================
   // 3. USES CASES
   // =============================================================
+
   // - Auth
   @injectable
   AuthUsesCases get authUseCases => AuthUsesCases(
@@ -96,6 +145,70 @@ abstract class Appmodule {
     logoutSession: LogoutUC(authRepository),
     saveUserSession: SaveUserSessionUC(authRepository),
     getProfileMeUC: GetProfileMeUC(authRepository),
+  );
+
+  // - Dispositivos
+  @injectable
+  DispositivosUseCases get dispositivosUseCases => DispositivosUseCases(
+    desactivarDispositivoPorToken: DesactivarDispositivoPorTokenUC(
+      dispositivoRepository,
+    ),
+    desactivarDispositivo: DesactivarDispositivoUC(dispositivoRepository),
+    getMisDispositivos: GetMisDispositivosUC(dispositivoRepository),
+    registrarDispositivo: RegistrarDispositivoUC(dispositivoRepository),
+  );
+
+  // - Notificaciones
+  @injectable
+  NotificacionesUseCases get notificacionesUsesCases => NotificacionesUseCases(
+    archivarNotificacion: ArchivarNotificacionUC(notificacionesRepository),
+    getMisNotificaciones: GetMisNotificacionesUC(notificacionesRepository),
+    getNotificacionById: GetNotificacionByIdUC(notificacionesRepository),
+    getTotalNoLeidas: GetTotalNoLeidasUC(notificacionesRepository),
+    marcarNotificacionLeida: MarcarNotificacionLeidaUC(
+      notificacionesRepository,
+    ),
+    marcarTodasNotificacionesLeidas: MarcarTodasNotificacionesLeidasUC(
+      notificacionesRepository,
+    ),
+  );
+
+  // - Programaciones
+  @injectable
+  ProgramacionesUseCases get programacionesUsesCases => ProgramacionesUseCases(
+    getMisAsignaciones: GetMisAsignacionesUC(programacionesRepository),
+    getProgramacionDetalle: GetProgramacionDetalleUC(programacionesRepository),
+    responderAsignacion: ResponderAsignacionUC(programacionesRepository),
+  );
+
+  // - Recoleccion
+  @injectable
+  RecoleccionUseCases get recoleccionUsesCases => RecoleccionUseCases(
+    getPuntosRecorrido: GetPuntosRecorridoUC(recoleccionRepository),
+    getRecoleccionById: GetRecoleccionByIdUC(recoleccionRepository),
+    getRecorridoProgreso: GetRecorridoProgresoUC(recoleccionRepository),
+    registrarEvidencia: RegistrarEvidenciaUC(recoleccionRepository),
+    registrarRecoleccionLote: RegistrarRecoleccionLoteUC(recoleccionRepository),
+    registrarRecoleccion: RegistrarRecoleccionUC(recoleccionRepository),
+  );
+
+  // - Recorrido
+  @injectable
+  RecorridoUsecases get recorridoUsesCases => RecorridoUsecases(
+    finalizarRecorrido: FinalizarRecorridoUC(recorridoRepository),
+    getMisRecorridos: GetMisRecorridosUC(recorridoRepository),
+    getRecorridoActivo: GetRecorridoActivoUC(recorridoRepository),
+    getRecorridoById: GetRecorridoByIdUC(recorridoRepository),
+    iniciarRecorrido: IniciarRecorridoUC(recorridoRepository),
+    pausarRecorrido: PausarRecorridoUC(recorridoRepository),
+    reanudarRecorrido: ReanudarRecorridoUC(recorridoRepository),
+  );
+
+  // - Tracking
+  @injectable
+  TrackingUseCases get trackingUsesCases => TrackingUseCases(
+    registrarUbicacionLote: RegistrarUbicacionLoteUC(trackingRepository),
+    registrarUbicacion: RegistrarUbicacionUC(trackingRepository),
   );
 
   // =============================================================

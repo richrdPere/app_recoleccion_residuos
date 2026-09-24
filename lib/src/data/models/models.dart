@@ -13,6 +13,13 @@ export 'package:app_recoleccion_residuos/src/data/models/auth/logout/logout_requ
 export 'package:app_recoleccion_residuos/src/data/models/auth/datos/usuario_data_model.dart';
 
 // =======================================================
+// PROGRAMACION
+// =======================================================
+export 'package:app_recoleccion_residuos/src/data/models/programaciones/mis_asignaciones_response.dart';
+export 'package:app_recoleccion_residuos/src/data/models/programaciones/programacion_detalle_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/programaciones/responder_asignacion_model.dart';
+
+// =======================================================
 // RECORRIDOS
 // =======================================================
 export 'package:app_recoleccion_residuos/src/data/models/recorrido/datos/recorrido_data_model.dart';

@@ -47,6 +47,11 @@ final appRouter = GoRouter(
       name: 'logout',
       builder: (_, _) => const LogoutPage(),
     ),
+    GoRoute(
+      path: '/register',
+      name: 'register',
+      builder: (_, _) => const RegisterPage(),
+    ),
 
     // *******************************************************
     // OPERACIONES
@@ -64,7 +69,7 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/mi-recorrido',
           name: 'mi_recorrido',
-          builder: (_, _) => const MiRecorridoPage(),
+          builder: (_, _) => const RecorridoPage(),
         ),
         GoRoute(
           path: '/historial',

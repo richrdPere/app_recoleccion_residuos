@@ -29,4 +29,14 @@ abstract class AuthRepository {
 
   /// 8. OBTENER PERFIL USUARIO
   Future<Resource<ApiResponse<UsuarioDataModel>>> getProfileMe();
+
+  /// 9. RENOVAR SESIÓN
+  Future<Resource<ApiResponse<RefreshTokenDataModel>>> refreshSession({
+    required RefreshTokenRequest request,
+  });
+
+  /// 10. REGISTER CIUDADANO
+  Future<Resource<ApiResponse<RegisterCiudadanoDataModel>>> registerCiudadano({
+    required RegisterCiudadanoRequest request,
+  });
 }

@@ -11,11 +11,13 @@ import 'session_state.dart';
 
 class SessionBloc extends Bloc<SessionEvent, SessionState> {
   final AuthUsesCases authUseCases;
+  bool _refreshInProgress = false;
 
   SessionBloc(this.authUseCases) : super(const SessionState()) {
     on<SessionStarted>(_onSessionStarted);
     on<SessionEstablished>(_onSessionEstablished);
     on<SessionLogoutRequested>(_onSessionLogoutRequested);
+    on<SessionRefreshRequested>(_onSessionRefreshRequested);
   }
 
   // *********************************************************
@@ -121,7 +123,9 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     SessionLogoutRequested event,
     Emitter<SessionState> emit,
   ) async {
-    if (state.isLoading || !state.isAuthenticated) return;
+    if (_refreshInProgress || state.isLoading || !state.isAuthenticated) {
+      return;
+    }
 
     emit(state.copyWith(status: SessionStatus.loggingOut));
 
@@ -212,6 +216,143 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
           errorMessage: 'Ocurrió un error al cerrar sesión.',
         ),
       );
+    }
+  }
+
+  // *********************************************************
+  // 4. RENOVAR SESIÓN
+  // *********************************************************
+  Future<void> _onSessionRefreshRequested(
+    SessionRefreshRequested event,
+    Emitter<SessionState> emit,
+  ) async {
+    if (_refreshInProgress || state.isLoading || !state.isAuthenticated) {
+      return;
+    }
+
+    final previousSession = state.session;
+    if (previousSession == null) return;
+
+    _refreshInProgress = true;
+
+    // Comprueba que sigue siendo la misma sesión y que no
+    // comenzó un cierre de sesión mientras esperaba la respuesta.
+    bool sigueVigente() {
+      return !emit.isDone &&
+          state.isAuthenticated &&
+          state.session?.refreshToken == previousSession.refreshToken;
+    }
+
+    try {
+      final response = await authUseCases.refreshSession.run(
+        request: RefreshTokenRequest(
+          refreshToken: previousSession.refreshToken,
+          dispositivo: 'APP_MOVIL',
+        ),
+      );
+
+      if (!sigueVigente()) return;
+
+      if (response is ErrorData<ApiResponse<RefreshTokenDataModel>>) {
+        // Utiliza 401 si ese es el contrato de tu endpoint
+        // para un refresh token vencido, inválido o revocado.
+        if (response.statusCode == 401) {
+          // Cambia primero el estado para bloquear el uso de la sesión.
+          emit(
+            const SessionState(
+              status: SessionStatus.unauthenticated,
+              errorMessage: 'Tu sesión ha expirado. Inicia sesión nuevamente.',
+            ),
+          );
+
+          try {
+            await authUseCases.clearUserSession.run();
+          } catch (_) {
+            // Permanece sin autenticar aunque falle la limpieza.
+            // La persistencia debe corregirse antes de restaurarla.
+          }
+
+          return;
+        }
+
+        // Un timeout, falta de conexión o error del servidor
+        // no demuestra que la sesión haya sido revocada.
+        emit(
+          SessionState(
+            status: SessionStatus.authenticated,
+            session: previousSession,
+            errorMessage: response.message,
+          ),
+        );
+        return;
+      }
+
+      if (response is! Success<ApiResponse<RefreshTokenDataModel>>) {
+        emit(
+          SessionState(
+            status: SessionStatus.authenticated,
+            session: previousSession,
+            errorMessage:
+                'No se recibió una respuesta válida '
+                'al renovar la sesión.',
+          ),
+        );
+        return;
+      }
+
+      final api = response.data;
+      final tokens = api.data;
+
+      if (!api.success ||
+          tokens == null ||
+          tokens.accessToken.trim().isEmpty ||
+          tokens.refreshToken.trim().isEmpty) {
+        emit(
+          SessionState(
+            status: SessionStatus.authenticated,
+            session: previousSession,
+            errorMessage:
+                'El servidor no confirmó la renovación '
+                'de la sesión.',
+          ),
+        );
+        return;
+      }
+
+      final renewedSession = LoginDataModel(
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        tokenType: tokens.tokenType,
+        expiresIn: tokens.expiresIn,
+        // El refresh no devuelve estos campos.
+        refreshExpiresIn: previousSession.refreshExpiresIn,
+        usuario: previousSession.usuario,
+      );
+
+      // Primero guarda los nuevos tokens.
+      await authUseCases.saveUserSession.run(renewedSession);
+
+      if (!sigueVigente()) return;
+
+      emit(
+        SessionState(
+          status: SessionStatus.authenticated,
+          session: renewedSession,
+          successMessage: api.message,
+        ),
+      );
+    } catch (_) {
+      if (!sigueVigente()) return;
+
+      emit(
+        SessionState(
+          status: SessionStatus.authenticated,
+          session: previousSession,
+          errorMessage: 'No se pudo completar la renovación de la sesión.',
+        ),
+      );
+    } finally {
+      _refreshInProgress = false;
     }
   }
 }

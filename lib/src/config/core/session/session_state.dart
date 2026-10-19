@@ -28,7 +28,9 @@ class SessionState {
   // *********************************************************
   UsuarioDataModel? get user => session?.usuario;
 
-  bool get isAuthenticated => session != null;
+  // bool get isAuthenticated => session != null;
+  bool get isAuthenticated =>
+      status == SessionStatus.authenticated && session != null;
 
   bool get isLoading =>
       status == SessionStatus.restoring ||

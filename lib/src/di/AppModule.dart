@@ -145,6 +145,8 @@ abstract class Appmodule {
     logoutSession: LogoutUC(authRepository),
     saveUserSession: SaveUserSessionUC(authRepository),
     getProfileMeUC: GetProfileMeUC(authRepository),
+    refreshSession: RefreshSessionUC(authRepository), 
+    registerCiudadano: RegisterCiudadanoUC(authRepository),
   );
 
   // - Dispositivos

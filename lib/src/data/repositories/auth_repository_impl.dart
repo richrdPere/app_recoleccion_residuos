@@ -162,4 +162,30 @@ class AuthRepositoryImpl implements AuthRepository {
 
     return await _authService.getProfileMe(token: token);
   }
+
+  // *********************************************************
+  // 9. RENOVAR SESIÓN
+  // *********************************************************
+  @override
+  Future<Resource<ApiResponse<RefreshTokenDataModel>>> refreshSession({
+    required RefreshTokenRequest request,
+  }) async {
+    final session = await getUserSession();
+    final token = session?.accessToken.trim();
+
+    if (token == null || token.isEmpty) {
+      return ErrorData<ApiResponse<RefreshTokenDataModel>>(
+        message: 'No existe una sesión iniciada.',
+      );
+    }
+
+    return await _authService.refreshSession(request: request);
+  }
+
+  @override
+  Future<Resource<ApiResponse<RegisterCiudadanoDataModel>>> registerCiudadano({
+    required RegisterCiudadanoRequest request,
+  }) async {
+    return await _authService.registerCiudadano(request: request);
+  }
 }

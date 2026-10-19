@@ -26,3 +26,10 @@ class SessionEstablished extends SessionEvent {
 class SessionLogoutRequested extends SessionEvent {
   const SessionLogoutRequested();
 }
+
+// *********************************************************
+// 4. CREFRESH SESSION
+// *********************************************************
+class SessionRefreshRequested extends SessionEvent {
+  const SessionRefreshRequested();
+}

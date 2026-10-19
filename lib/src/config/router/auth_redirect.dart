@@ -8,11 +8,17 @@ import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
 const authFlowRoutes = <String>{'/splash', '/loading', '/logout'};
 
 // Rutas públicas implementadas.
-const publicRoutes = <String>{'/login'};
+const publicRoutes = <String>{'/login', '/register'};
 
 String? authRedirect(BuildContext context, GoRouterState state) {
   final session = context.read<SessionBloc>().state;
   final location = state.uri.path;
+
+  debugPrint(
+    '[authRedirect] '
+    'location=$location '
+    'status=${session.status}',
+  );
 
   // *********************************************************
   // 1. RESPETAR LAS PANTALLAS DEL FLUJO DE AUTENTICACIÓN
@@ -39,7 +45,7 @@ String? authRedirect(BuildContext context, GoRouterState state) {
       return '/logout';
 
     case SessionStatus.authenticated:
-      if (location == '/login') {
+      if (publicRoutes.contains(location)) {
         return '/home';
       }
 

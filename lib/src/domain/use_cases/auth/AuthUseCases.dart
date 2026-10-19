@@ -1,3 +1,4 @@
+
 import 'package:app_recoleccion_residuos/src/domain/uses_cases.dart';
 
 class AuthUsesCases {
@@ -9,6 +10,8 @@ class AuthUsesCases {
   LoginUC login;
   LogoutUC logoutSession;
   SaveUserSessionUC saveUserSession;
+  RefreshSessionUC refreshSession;
+  RegisterCiudadanoUC registerCiudadano;
 
   AuthUsesCases({
     required this.clearUserSession,
@@ -19,5 +22,7 @@ class AuthUsesCases {
     required this.login,
     required this.logoutSession,
     required this.saveUserSession,
+    required this.refreshSession,
+    required this.registerCiudadano,
   });
 }

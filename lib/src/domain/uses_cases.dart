@@ -8,7 +8,9 @@ export 'package:app_recoleccion_residuos/src/domain/use_cases/auth/auth_use_case
 export 'package:app_recoleccion_residuos/src/domain/use_cases/auth/auth_use_cases/GetUserSessionUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/auth/auth_use_cases/LoginUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/auth/auth_use_cases/LogoutUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/auth/auth_use_cases/RefreshSessionUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/auth/auth_use_cases/SaveUserSessionUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/auth/auth_use_cases/RegisterCiudadanoUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/auth/AuthUseCases.dart';
 
 // =======================================================================

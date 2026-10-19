@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 // Environment
@@ -336,6 +337,10 @@ class RecorridoService {
           Map<String, dynamic>.from(rawData as Map),
         );
       });
+
+      debugPrint("========================================================");
+      debugPrint("api: $apiResponse");
+      debugPrint("========================================================");
 
       return Success<ApiResponse<RecorridoDataModel?>>(apiResponse);
     } on TimeoutException catch (error) {

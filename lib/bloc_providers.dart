@@ -44,9 +44,23 @@ List<BlocProvider> blocProviders = [
   ),
 
   // *********************************************************
-  // 5. PERFIL
+  // 6. PERFIL
   // *********************************************************
   BlocProvider<PerfilBloc>(
     create: (context) => PerfilBloc(locator<AuthUsesCases>()),
+  ),
+
+  // *********************************************************
+  // 7. RECORRIDOS
+  // *********************************************************
+  BlocProvider<RecorridoBloc>(
+    create: (context) => RecorridoBloc(locator<RecorridoUsecases>()),
+  ),
+
+  // *********************************************************
+  // 8. REGISTER - CIUDADANO
+  // *********************************************************
+  BlocProvider<RegisterBloc>(
+    create: (_) => RegisterBloc(locator<AuthUsesCases>()),
   ),
 ];

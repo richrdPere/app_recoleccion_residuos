@@ -11,6 +11,9 @@ export 'package:app_recoleccion_residuos/src/data/models/auth/login/login_reques
 export 'package:app_recoleccion_residuos/src/data/models/auth/logout/logout_data_model.dart';
 export 'package:app_recoleccion_residuos/src/data/models/auth/logout/logout_request.dart';
 export 'package:app_recoleccion_residuos/src/data/models/auth/datos/usuario_data_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/auth/refresh/refresh_token_data_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/auth/refresh/refresh_token_request.dart';
+export 'package:app_recoleccion_residuos/src/data/models/auth/register-ciudadano/register_ciudadano_model.dart';
 
 // =======================================================
 // PROGRAMACION

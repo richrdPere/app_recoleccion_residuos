@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 // Blocs
 import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
 
+// Content
 import 'login_content.dart';
 
 class LoginPage extends StatelessWidget {

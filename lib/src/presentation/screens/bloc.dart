@@ -8,6 +8,11 @@ export 'package:app_recoleccion_residuos/src/presentation/screens/auth/login/blo
 export 'package:app_recoleccion_residuos/src/presentation/screens/auth/login/bloc/login_state.dart';
 export 'package:app_recoleccion_residuos/src/presentation/screens/auth/login/bloc/login_event.dart';
 
+// Register - Ciudadano
+export 'package:app_recoleccion_residuos/src/presentation/screens/auth/register/bloc/register_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/auth/register/bloc/register_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/auth/register/bloc/register_state.dart';
+
 // Splash
 export 'package:app_recoleccion_residuos/src/presentation/shared/screens/splash/bloc/splash_bloc.dart';
 export 'package:app_recoleccion_residuos/src/presentation/shared/screens/splash/bloc/splash_event.dart';
@@ -27,3 +32,8 @@ export 'package:app_recoleccion_residuos/src/presentation/shared/screens/logout/
 export 'package:app_recoleccion_residuos/src/presentation/screens/perfil/bloc/perfil_bloc.dart';
 export 'package:app_recoleccion_residuos/src/presentation/screens/perfil/bloc/perfil_event.dart';
 export 'package:app_recoleccion_residuos/src/presentation/screens/perfil/bloc/perfil_state.dart';
+
+// Recorridos
+export 'package:app_recoleccion_residuos/src/presentation/screens/recorrido/bloc/recorrido_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/recorrido/bloc/recorrido_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/recorrido/bloc/recorrido_state.dart';

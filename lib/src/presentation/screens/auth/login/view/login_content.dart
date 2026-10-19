@@ -1,5 +1,3 @@
-
-import 'package:app_recoleccion_residuos/src/presentation/shared/widgets/app_widgets/app_geometrical_background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -8,6 +6,10 @@ import 'package:app_recoleccion_residuos/src/data/models/models.dart';
 
 // Bloc
 import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
+
+// Widgets
+import 'package:app_recoleccion_residuos/src/presentation/shared/widgets/app_widgets/app_geometrical_background.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginContent extends StatefulWidget {
   const LoginContent({super.key});
@@ -126,12 +128,14 @@ class _LoginContentState extends State<LoginContent> {
               builder: (context, constraints) {
                 final compact = constraints.maxWidth < 360;
                 final horizontalPadding = compact ? 20.0 : 32.0;
-          
+
                 return SingleChildScrollView(
                   keyboardDismissBehavior:
                       ScrollViewKeyboardDismissBehavior.onDrag,
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -179,7 +183,7 @@ class _LoginContentState extends State<LoginContent> {
                             ],
                           ),
                         ),
-          
+
                         // *************************************
                         // PANEL DEL FORMULARIO
                         // *************************************
@@ -210,9 +214,10 @@ class _LoginContentState extends State<LoginContent> {
                                     children: [
                                       Text(
                                         'Iniciar sesión',
-                                        style: textTheme.headlineSmall?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                        style: textTheme.headlineSmall
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
@@ -224,7 +229,7 @@ class _LoginContentState extends State<LoginContent> {
                                         ),
                                       ),
                                       const SizedBox(height: 32),
-          
+
                                       // USUARIO
                                       TextFormField(
                                         controller: _usernameController,
@@ -249,7 +254,7 @@ class _LoginContentState extends State<LoginContent> {
                                               value.trim().isEmpty) {
                                             return 'Ingresa tu usuario.';
                                           }
-          
+
                                           return null;
                                         },
                                         onFieldSubmitted: (_) {
@@ -257,7 +262,7 @@ class _LoginContentState extends State<LoginContent> {
                                         },
                                       ),
                                       const SizedBox(height: 20),
-          
+
                                       // CONTRASEÑA
                                       TextFormField(
                                         controller: _passwordController,
@@ -292,7 +297,8 @@ class _LoginContentState extends State<LoginContent> {
                                             icon: Icon(
                                               _obscurePassword
                                                   ? Icons.visibility_outlined
-                                                  : Icons.visibility_off_outlined,
+                                                  : Icons
+                                                        .visibility_off_outlined,
                                             ),
                                           ),
                                         ),
@@ -300,13 +306,13 @@ class _LoginContentState extends State<LoginContent> {
                                           if (value == null || value.isEmpty) {
                                             return 'Ingresa tu contraseña.';
                                           }
-          
+
                                           return null;
                                         },
                                         onFieldSubmitted: (_) => _submit(),
                                       ),
                                       const SizedBox(height: 28),
-          
+
                                       // INGRESAR
                                       FilledButton(
                                         onPressed: canSubmit ? _submit : null,
@@ -333,9 +339,10 @@ class _LoginContentState extends State<LoginContent> {
                                               const SizedBox(
                                                 width: 20,
                                                 height: 20,
-                                                child: CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                ),
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                    ),
                                               ),
                                               const SizedBox(width: 12),
                                             ],
@@ -348,7 +355,22 @@ class _LoginContentState extends State<LoginContent> {
                                           ],
                                         ),
                                       ),
-          
+
+                                      // IR A REGISTER
+                                      TextButton(
+                                        onPressed: canSubmit
+                                            ? () => {
+                                                debugPrint(
+                                                  '[REGISTER] Antes de navegar',
+                                                ),
+                                                context.pushNamed('register'),
+                                              }
+                                            : null,
+                                        child: const Text(
+                                          'Crear cuenta ciudadana',
+                                        ),
+                                      ),
+
                                       // REINTENTAR LECTURA LOCAL
                                       if (restorationFailed) ...[
                                         const SizedBox(height: 16),
@@ -365,13 +387,15 @@ class _LoginContentState extends State<LoginContent> {
                                               const SessionStarted(),
                                             );
                                           },
-                                          icon: const Icon(Icons.refresh_rounded),
+                                          icon: const Icon(
+                                            Icons.refresh_rounded,
+                                          ),
                                           label: const Text(
                                             'Reintentar recuperación',
                                           ),
                                         ),
                                       ],
-          
+
                                       const SizedBox(height: 28),
                                       Text(
                                         'Acceso para personal autorizado.\n'

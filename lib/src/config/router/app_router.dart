@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 // Autenticación
@@ -6,6 +7,10 @@ import 'package:app_recoleccion_residuos/src/config/router/auth_redirect.dart';
 
 // Main shell
 import 'package:app_recoleccion_residuos/src/config/core/main_shell/main_shell.dart';
+import 'package:app_recoleccion_residuos/src/config/core/main_shell/ciudadano_Shell.dart';
+
+// Bloc
+import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
 
 // Screens
 import 'package:app_recoleccion_residuos/src/presentation/screens/screens.dart';
@@ -82,6 +87,82 @@ final appRouter = GoRouter(
           builder: (_, _) => const PerfilPage(),
         ),
       ],
+    ),
+
+    // *******************************************************
+    // CIUDADANOS - OPERACIONES
+    // *******************************************************
+    ShellRoute(
+      builder: (context, state, child) {
+        return CiudadanoShell(child: child);
+      },
+      routes: [
+        GoRoute(
+          path: '/ciudadano/inicio',
+          name: 'ciudadano-inicio',
+          builder: (context, state) =>
+              const Center(child: Text('Inicio ciudadano')),
+        ),
+        GoRoute(
+          path: '/ciudadano/mapa',
+          name: 'ciudadano-mapa',
+          builder: (context, state) =>
+              const Center(child: Text('Mapa de recolección')),
+        ),
+        GoRoute(
+          path: '/ciudadano/alertas',
+          name: 'ciudadano-alertas',
+          builder: (context, state) =>
+              const Center(child: Text('Alertas ciudadanas')),
+        ),
+        GoRoute(
+          path: '/ciudadano/perfil',
+          name: 'ciudadano-perfil',
+          builder: (context, state) => const Center(child: Text('Mi cuenta')),
+        ),
+      ],
+    ),
+
+    // *******************************************************
+    // SIN ACCESSO
+    // *******************************************************
+    GoRoute(
+      path: '/sin-acceso',
+      name: 'sin-acceso',
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Acceso no disponible'),
+            automaticallyImplyLeading: false,
+          ),
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.no_accounts_outlined, size: 56),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Tu cuenta no tiene un rol habilitado '
+                    'para utilizar esta aplicación.',
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  FilledButton(
+                    onPressed: () {
+                      context.read<SessionBloc>().add(
+                        const SessionLogoutRequested(),
+                      );
+                    },
+                    child: const Text('Cerrar sesión'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     ),
   ],
 );

@@ -70,3 +70,29 @@ export 'package:app_recoleccion_residuos/src/domain/use_cases/recorrido/Recorrid
 export 'package:app_recoleccion_residuos/src/domain/use_cases/tracking/tracking_use_cases/RegistrarUbicacionLoteUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/tracking/tracking_use_cases/RegistrarUbicacionUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/tracking/TrackingUseCases.dart';
+
+// =======================================================================
+// CIUDADANOS
+// =======================================================================
+export 'package:app_recoleccion_residuos/src/domain/use_cases/ciudadanos/ciudadanos_use_cases/CreateCiudadanoPerfilUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/ciudadanos/ciudadanos_use_cases/GetMiPerfilCiudadanoUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/ciudadanos/ciudadanos_use_cases/UpdateMiPerfilCiudadanoUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/ciudadanos/CiudadanosUseCases.dart';
+
+// =======================================================================
+// DOMICILIOS
+// =======================================================================
+export 'package:app_recoleccion_residuos/src/domain/use_cases/domicilios/domicilios_use_cases/CreateCiudadanoDomicilioUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/domicilios/domicilios_use_cases/DeleteCiudadanoDomicilioUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/domicilios/domicilios_use_cases/GetDomicilioCronogramaUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/domicilios/domicilios_use_cases/GetMisDomiciliosUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/domicilios/domicilios_use_cases/SetPrincipalCiudadanoDomicilioUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/domicilios/domicilios_use_cases/UpdateCiudadanoDomicilioUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/domicilios/DomiciliosUseCases.dart';
+
+// =======================================================================
+// PREF NOTIFICATIONS
+// =======================================================================
+export 'package:app_recoleccion_residuos/src/domain/use_cases/pref_notification/pref_notification_use_cases/GetCiudadanoPreferenciasUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/pref_notification/pref_notification_use_cases/UpdateCiudadanoPreferenciasUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/pref_notification/PrefNotificationUseCases.dart';

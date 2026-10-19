@@ -1,3 +1,9 @@
+export 'package:app_recoleccion_residuos/src/data/repositories/pref_notification_repository_impl.dart';
+
+export 'package:app_recoleccion_residuos/src/data/repositories/domicilios_repository_impl.dart';
+
+export 'package:app_recoleccion_residuos/src/data/repositories/ciudadanos_repository_impl.dart';
+
 export 'package:app_recoleccion_residuos/src/data/repositories/tracking_repository_impl.dart';
 
 export 'package:app_recoleccion_residuos/src/data/repositories/recorrido_repository_impl.dart';

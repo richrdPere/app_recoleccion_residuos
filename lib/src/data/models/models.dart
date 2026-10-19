@@ -74,3 +74,22 @@ export 'package:app_recoleccion_residuos/src/data/models/dispositivos/desactivar
 export 'package:app_recoleccion_residuos/src/data/models/dispositivos/get_mis%20dispositivo/get_mis_dispositivos_data_model.dart';
 export 'package:app_recoleccion_residuos/src/data/models/dispositivos/registrar_dispositivo/registrar_dispositivo_data_model.dart';
 export 'package:app_recoleccion_residuos/src/data/models/dispositivos/registrar_dispositivo/registrar_dispositivo_req.dart';
+
+// =======================================================
+// CIUDADANOS
+// =======================================================
+export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/create_ciudadano_perfil_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/get_ciudadano_perfil_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/update_ciudadano_perfil_model.dart';
+
+// Domicilios
+export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/create_ciudadano_domicilio_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/get_mis_domicilios_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/update_ciudadano_domicilio_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/set_principal_ciudadano_domicilio_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/get_domicilio_cronograma_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/delete_ciudadano_domicilio_model.dart';
+
+// Preferencias
+export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/get_ciudadano_preferencias_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/update_ciudadano_preferencias_model.dart';

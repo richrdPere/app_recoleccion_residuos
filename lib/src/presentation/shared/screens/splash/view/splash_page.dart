@@ -1,6 +1,11 @@
+// ignore_for_file: unrelated_type_equality_checks
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+// Redirect
+import 'package:app_recoleccion_residuos/src/config/router/auth_redirect.dart';
 
 // Bloc
 import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
@@ -47,7 +52,9 @@ class _SplashPageState extends State<SplashPage> {
         listener: (context, state) {
           switch (state.status) {
             case SplashStatus.authenticated:
-              context.go('/home');
+              final sessionState = context.read<SessionBloc>().state;
+
+              context.go(getSessionHomeRoute(sessionState));
               return;
 
             case SplashStatus.unauthenticated:

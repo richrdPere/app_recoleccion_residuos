@@ -91,6 +91,16 @@ abstract class Appmodule {
   @injectable // Tracking
   TrackingService get trackingService => TrackingService();
 
+  @injectable // Ciudadanos
+  CiudadanosService get ciudadanosService => CiudadanosService();
+
+  @injectable // Domicilios
+  DomiciliosService get domiciliosService => DomiciliosService();
+
+  @injectable // Pref notifications
+  PrefNotificationService get prefNotificationService =>
+      PrefNotificationService();
+
   // =============================================================
   // 2. REPOSITORY
   // =============================================================
@@ -130,6 +140,21 @@ abstract class Appmodule {
   TrackingRepository get trackingRepository =>
       TrackingRepositoryImpl(trackingService, authRepository);
 
+  // - Ciudadanos
+  @injectable
+  CiudadanosRepository get ciudadanosRepository =>
+      CiudadanosRepositoryImpl(ciudadanosService, authRepository);
+
+  // - Domicilios
+  @injectable
+  DomiciliosRepository get domiciliosRepository =>
+      DomiciliosRepositoryImpl(domiciliosService, authRepository);
+
+  // - Pref notification
+  @injectable
+  PrefNotificationRepository get prefNotificationRepository =>
+      PrefNotificationRepositoryImpl(prefNotificationService, authRepository);
+
   // =============================================================
   // 3. USES CASES
   // =============================================================
@@ -145,7 +170,7 @@ abstract class Appmodule {
     logoutSession: LogoutUC(authRepository),
     saveUserSession: SaveUserSessionUC(authRepository),
     getProfileMeUC: GetProfileMeUC(authRepository),
-    refreshSession: RefreshSessionUC(authRepository), 
+    refreshSession: RefreshSessionUC(authRepository),
     registerCiudadano: RegisterCiudadanoUC(authRepository),
   );
 
@@ -212,6 +237,39 @@ abstract class Appmodule {
     registrarUbicacionLote: RegistrarUbicacionLoteUC(trackingRepository),
     registrarUbicacion: RegistrarUbicacionUC(trackingRepository),
   );
+
+  // - Ciudadanos
+  @injectable
+  CiudadanosUseCases get ciudadanosUsesCases => CiudadanosUseCases(
+    createCiudadanoPerfil: CreateCiudadanoPerfilUC(ciudadanosRepository),
+    getMiPerfilCiudadano: GetMiPerfilCiudadanoUC(ciudadanosRepository),
+    updateMiPerfilCiudadano: UpdateMiPerfilCiudadanoUC(ciudadanosRepository),
+  );
+
+  // - Domicilios
+  @injectable
+  DomiciliosUseCases get domiciliosUsesCases => DomiciliosUseCases(
+    createCiudadanoDomicilio: CreateCiudadanoDomicilioUC(domiciliosRepository),
+    deleteCiudadanoDomicilio: DeleteCiudadanoDomicilioUC(domiciliosRepository),
+    getDomicilioCronograma: GetDomicilioCronogramaUC(domiciliosRepository),
+    getMisDomicilios: GetMisDomiciliosUC(domiciliosRepository),
+    setPrincipalCiudadanoDomicilio: SetPrincipalCiudadanoDomicilioUC(
+      domiciliosRepository,
+    ),
+    updateCiudadanoDomicilio: UpdateCiudadanoDomicilioUC(domiciliosRepository),
+  );
+
+  // - Pref Notification
+  @injectable
+  PrefNotificationUseCases get prefNotificationUsesCases =>
+      PrefNotificationUseCases(
+        getCiudadanoPreferencias: GetCiudadanoPreferenciasUC(
+          prefNotificationRepository,
+        ),
+        updateCiudadanoPreferencias: UpdateCiudadanoPreferenciasUC(
+          prefNotificationRepository,
+        ),
+      );
 
   // =============================================================
   // 4. SOCKETS

@@ -1,14 +1,15 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+// Redirect
+import 'package:app_recoleccion_residuos/src/config/router/auth_redirect.dart';
 
 // Bloc
 import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
 
 // Content
 import 'loading_content.dart';
-
 
 class LoadingPage extends StatefulWidget {
   const LoadingPage({super.key});
@@ -58,8 +59,13 @@ class _LoadingPageState extends State<LoadingPage> {
       child: BlocConsumer<LoadingBloc, LoadingState>(
         listener: (context, state) {
           if (state.status == LoadingStatus.authenticated) {
-            context.go('/home');
-          } else if (state.status == LoadingStatus.unauthenticated) {
+            final sessionState = context.read<SessionBloc>().state;
+
+            context.go(getSessionHomeRoute(sessionState));
+            return;
+          }
+
+          if (state.status == LoadingStatus.unauthenticated) {
             context.go('/login');
           }
         },

@@ -40,6 +40,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i322.RecoleccionService>(() => appmodule.recoleccionService);
     gh.factory<_i322.RecorridoService>(() => appmodule.recorridoService);
     gh.factory<_i322.TrackingService>(() => appmodule.trackingService);
+    gh.factory<_i322.CiudadanosService>(() => appmodule.ciudadanosService);
+    gh.factory<_i322.DomiciliosService>(() => appmodule.domiciliosService);
+    gh.factory<_i322.PrefNotificationService>(
+      () => appmodule.prefNotificationService,
+    );
     gh.factory<_i704.AuthRepository>(() => appmodule.authRepository);
     gh.factory<_i704.DispositivoRepository>(
       () => appmodule.dispositivoRepository,
@@ -55,6 +60,15 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i704.RecorridoRepository>(() => appmodule.recorridoRepository);
     gh.factory<_i704.TrackingRepository>(() => appmodule.trackingRepository);
+    gh.factory<_i704.CiudadanosRepository>(
+      () => appmodule.ciudadanosRepository,
+    );
+    gh.factory<_i704.DomiciliosRepository>(
+      () => appmodule.domiciliosRepository,
+    );
+    gh.factory<_i704.PrefNotificationRepository>(
+      () => appmodule.prefNotificationRepository,
+    );
     gh.factory<_i1034.AuthUsesCases>(() => appmodule.authUseCases);
     gh.factory<_i1034.DispositivosUseCases>(
       () => appmodule.dispositivosUseCases,
@@ -70,6 +84,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i1034.RecorridoUsecases>(() => appmodule.recorridoUsesCases);
     gh.factory<_i1034.TrackingUseCases>(() => appmodule.trackingUsesCases);
+    gh.factory<_i1034.CiudadanosUseCases>(() => appmodule.ciudadanosUsesCases);
+    gh.factory<_i1034.DomiciliosUseCases>(() => appmodule.domiciliosUsesCases);
+    gh.factory<_i1034.PrefNotificationUseCases>(
+      () => appmodule.prefNotificationUsesCases,
+    );
     gh.factory<String>(
       () => appmodule.googleMapsApiKey,
       instanceName: 'googleMapsApiKey',

@@ -8,11 +8,6 @@ export 'package:app_recoleccion_residuos/src/presentation/screens/auth/login/blo
 export 'package:app_recoleccion_residuos/src/presentation/screens/auth/login/bloc/login_state.dart';
 export 'package:app_recoleccion_residuos/src/presentation/screens/auth/login/bloc/login_event.dart';
 
-// Register - Ciudadano
-export 'package:app_recoleccion_residuos/src/presentation/screens/auth/register/bloc/register_bloc.dart';
-export 'package:app_recoleccion_residuos/src/presentation/screens/auth/register/bloc/register_event.dart';
-export 'package:app_recoleccion_residuos/src/presentation/screens/auth/register/bloc/register_state.dart';
-
 // Splash
 export 'package:app_recoleccion_residuos/src/presentation/shared/screens/splash/bloc/splash_bloc.dart';
 export 'package:app_recoleccion_residuos/src/presentation/shared/screens/splash/bloc/splash_event.dart';
@@ -37,3 +32,23 @@ export 'package:app_recoleccion_residuos/src/presentation/screens/perfil/bloc/pe
 export 'package:app_recoleccion_residuos/src/presentation/screens/recorrido/bloc/recorrido_bloc.dart';
 export 'package:app_recoleccion_residuos/src/presentation/screens/recorrido/bloc/recorrido_event.dart';
 export 'package:app_recoleccion_residuos/src/presentation/screens/recorrido/bloc/recorrido_state.dart';
+
+// Register - Ciudadano
+export 'package:app_recoleccion_residuos/src/presentation/screens/auth/register/bloc/register_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/auth/register/bloc/register_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/auth/register/bloc/register_state.dart';
+
+// Cuenta - Ciudadano
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_cuenta/bloc/ciudadano_cuenta_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_cuenta/bloc/ciudadano_cuenta_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_cuenta/bloc/ciudadano_cuenta_state.dart';
+
+// Inicio - Ciudadano
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_inicio/bloc/ciudadano_inicio_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_inicio/bloc/ciudadano_inicio_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_inicio/bloc/ciudadano_inicio_state.dart';
+
+// Domicilios - Ciudadano
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_domicilios/bloc/ciudadano_domicilios_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_domicilios/bloc/ciudadano_domicilios_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_domicilios/bloc/ciudadano_domicilios_state.dart';

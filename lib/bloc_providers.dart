@@ -63,4 +63,25 @@ List<BlocProvider> blocProviders = [
   BlocProvider<RegisterBloc>(
     create: (_) => RegisterBloc(locator<AuthUsesCases>()),
   ),
+
+  // *********************************************************
+  // 9. CUENTA - CIUDADANO
+  // *********************************************************
+  BlocProvider<CiudadanoCuentaBloc>(
+    create: (_) => CiudadanoCuentaBloc(locator<CiudadanosUseCases>()),
+  ),
+
+  // *********************************************************
+  // 10. INICIO - CIUDADANO
+  // *********************************************************
+  BlocProvider<CiudadanoInicioBloc>(
+    create: (_) => CiudadanoInicioBloc(locator<DomiciliosUseCases>()),
+  ),
+
+  // *********************************************************
+  // 11. DOMICILIOS - CIUDADANO
+  // *********************************************************
+  BlocProvider<CiudadanoDomiciliosBloc>(
+    create: (_) => CiudadanoDomiciliosBloc(locator<DomiciliosUseCases>()),
+  ),
 ];

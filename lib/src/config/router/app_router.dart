@@ -100,8 +100,7 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/ciudadano/inicio',
           name: 'ciudadano-inicio',
-          builder: (context, state) =>
-              const Center(child: Text('Inicio ciudadano')),
+          builder: (context, state) => const CiudadanoInicioPage(),
         ),
         GoRoute(
           path: '/ciudadano/mapa',
@@ -118,9 +117,47 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/ciudadano/perfil',
           name: 'ciudadano-perfil',
-          builder: (context, state) => const Center(child: Text('Mi cuenta')),
+          builder: (context, state) => const CiudadanoCuentaPage(),
+          routes: [
+            GoRoute(
+              path: 'editar/:idCiudadano',
+              name: 'ciudadano-perfil-editar',
+              builder: (context, state) {
+                final id = int.tryParse(
+                  state.pathParameters['idCiudadano'] ?? '',
+                );
+
+                if (id == null || id <= 0) {
+                  return Scaffold(
+                    appBar: AppBar(title: const Text('Editar perfil')),
+                    body: const Center(
+                      child: Text('El identificador del perfil no es válido.'),
+                    ),
+                  );
+                }
+
+                return CiudadanoPerfilEditPage(idCiudadano: id);
+              },
+            ),
+            GoRoute(
+              path: 'domicilios',
+              name: 'ciudadano-domicilios',
+              builder: (context, state) => const CiudadanoDomiciliosPage(),
+            ),
+          ],
         ),
       ],
+    ),
+
+    // *******************************************************
+    // CON ACCESSO
+    // *******************************************************
+
+    // - Ciudadano
+    GoRoute(
+      path: '/ciudadano/acceso',
+      name: 'ciudadano-acceso',
+      builder: (context, state) => const CiudadanoAccesoPage(),
     ),
 
     // *******************************************************

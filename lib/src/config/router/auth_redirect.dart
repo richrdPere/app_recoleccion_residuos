@@ -62,8 +62,11 @@ String getSessionHomeRoute(SessionState session) {
     return '/home';
   }
 
+  // if (roles.contains('CIUDADANO')) {
+  //   return '/ciudadano/inicio';
+  // }
   if (roles.contains('CIUDADANO')) {
-    return '/ciudadano/inicio';
+    return '/ciudadano/acceso';
   }
 
   return '/sin-acceso';
@@ -117,24 +120,55 @@ String? authRedirect(BuildContext context, GoRouterState state) {
 
       final homeRoute = getSessionHomeRoute(session);
 
-      // Usuario autenticado sin roles habilitados para esta app.
+      // Sin roles habilitados para la app.
       if (!isCiudadano && !isOperativo) {
         return location == '/sin-acceso' ? null : '/sin-acceso';
       }
 
-      // Login, registro y pantalla sin acceso.
+      // Pantallas que no corresponden a una sesión autenticada.
       if (publicRoutes.contains(location) ||
           location == '/sin-acceso' ||
           location == '/') {
         return homeRoute;
       }
 
-      // Área ciudadana y todas sus subrutas.
+      // *******************************************************
+      // ÁREA CIUDADANA
+      // *******************************************************
+
       if (_matchesRoute(location, '/ciudadano')) {
-        return isCiudadano ? null : homeRoute;
+        if (!isCiudadano) {
+          return homeRoute;
+        }
+
+        // Permitir siempre la pantalla que consulta/crea el perfil.
+        // Así evitamos redirigirla hacia sí misma.
+        if (location == '/ciudadano/acceso') {
+          return null;
+        }
+
+        final cuenta = context.read<CiudadanoCuentaBloc>().state;
+
+        final idUsuarioSesion = session.session?.usuario.idUsuario;
+
+        // No basta con tener un perfil cargado:
+        // debe pertenecer al usuario actualmente autenticado.
+        final perfilVerificado =
+            cuenta.perfil != null &&
+            idUsuarioSesion != null &&
+            cuenta.perfil!.idUsuario.toString() == idUsuarioSesion.toString();
+
+        if (!perfilVerificado) {
+          return '/ciudadano/acceso';
+        }
+
+        return null;
       }
 
-      // Área operativa y todas sus subrutas.
+      // *******************************************************
+      // ÁREA OPERATIVA
+      // *******************************************************
+
       final isOperationalRoute = operationalRoutes.any(
         (route) => _matchesRoute(location, route),
       );
@@ -143,8 +177,6 @@ String? authRedirect(BuildContext context, GoRouterState state) {
         return isOperativo ? null : homeRoute;
       }
 
-      // Las demás rutas conservan su resolución normal.
-      // Agrega aquí permisos si incorporas nuevas áreas.
       return null;
   }
 }

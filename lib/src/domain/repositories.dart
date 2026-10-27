@@ -1,3 +1,11 @@
+export 'package:app_recoleccion_residuos/src/domain/repositories/geolocator_repository.dart';
+
+export 'package:app_recoleccion_residuos/src/domain/repositories/geocoding_repository.dart';
+
+export 'package:app_recoleccion_residuos/src/domain/repositories/directions_repository.dart';
+
+export 'package:app_recoleccion_residuos/src/domain/repositories/mapa_repository.dart';
+
 export 'package:app_recoleccion_residuos/src/domain/repositories/pref_notification_repository.dart';
 
 export 'package:app_recoleccion_residuos/src/domain/repositories/domicilios_repository.dart';

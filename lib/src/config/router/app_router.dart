@@ -74,7 +74,10 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/mi-recorrido',
           name: 'mi_recorrido',
-          builder: (_, _) => const RecorridoPage(),
+          // builder: (_, _) => const RecorridoPage(),
+          builder: (context, state) {
+            return const MapaPage();
+          },
         ),
         GoRoute(
           path: '/historial',
@@ -105,8 +108,11 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/ciudadano/mapa',
           name: 'ciudadano-mapa',
-          builder: (context, state) =>
-              const Center(child: Text('Mapa de recolección')),
+          // builder: (context, state) =>
+          //     const Center(child: Text('Mapa ciudadanas')),
+          builder: (context, state) {
+            return const MapaPage();
+          },
         ),
         GoRoute(
           path: '/ciudadano/alertas',

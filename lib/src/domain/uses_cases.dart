@@ -96,3 +96,36 @@ export 'package:app_recoleccion_residuos/src/domain/use_cases/domicilios/Domicil
 export 'package:app_recoleccion_residuos/src/domain/use_cases/pref_notification/pref_notification_use_cases/GetCiudadanoPreferenciasUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/pref_notification/pref_notification_use_cases/UpdateCiudadanoPreferenciasUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/pref_notification/PrefNotificationUseCases.dart';
+
+// =======================================================================
+// MAPA
+// =======================================================================
+export 'package:app_recoleccion_residuos/src/domain/use_cases/mapa/mapa_uses_case/GetConfiguracionInicialUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/mapa/MapaUsesCase.dart';
+
+// =======================================================================
+// DIRECTIONS
+// =======================================================================
+export 'package:app_recoleccion_residuos/src/domain/use_cases/directions/directions_use_case/CalcularRutaUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/directions/DirectionsUseCases.dart';
+
+// =======================================================================
+// GEOCODING
+// =======================================================================
+export 'package:app_recoleccion_residuos/src/domain/use_cases/geocoding/geocoding_use_cases/BuscarDireccionUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/geocoding/geocoding_use_cases/ObtenerDireccionUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/geocoding/GeocodingUseCases.dart';
+
+// =======================================================================
+// GEOLOCATOR
+// =======================================================================
+export 'package:app_recoleccion_residuos/src/domain/use_cases/geolocator/geolocator_use_cases/AbrirConfiguracionAplicacionUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/geolocator/geolocator_use_cases/AbrirConfiguracionUbicacionUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/geolocator/geolocator_use_cases/EstaServicioHabilitadoUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/geolocator/geolocator_use_cases/ObservarEstadoServicioUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/geolocator/geolocator_use_cases/ObservarUbicacionUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/geolocator/geolocator_use_cases/ObtenerUbicacionActualUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/geolocator/geolocator_use_cases/SolicitarPermisoUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/geolocator/geolocator_use_cases/VerificarPermisoUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/geolocator/geolocator_use_cases/obtenerUltimaUbicacionUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/geolocator/GeolocatorUseCases.dart';

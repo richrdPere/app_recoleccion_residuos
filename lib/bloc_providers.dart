@@ -84,4 +84,47 @@ List<BlocProvider> blocProviders = [
   BlocProvider<CiudadanoDomiciliosBloc>(
     create: (_) => CiudadanoDomiciliosBloc(locator<DomiciliosUseCases>()),
   ),
+
+  // *********************************************************
+  // 12. MAPA BASE
+  // *********************************************************
+  BlocProvider<MapaBloc>(
+    create: (_) =>
+        MapaBloc(locator<MapaUsesCase>())..add(const MapaInicializado()),
+  ),
+
+  // *********************************************************
+  // 13. DIRECTIONS
+  // *********************************************************
+  BlocProvider<DirectionsBloc>(
+    create: (_) => DirectionsBloc(locator<DirectionsUseCases>()),
+  ),
+
+  // *********************************************************
+  // 14. GEOLOCODING
+  // *********************************************************
+  BlocProvider<GeocodingBloc>(
+    create: (_) => GeocodingBloc(locator<GeocodingUseCases>()),
+  ),
+
+  // *********************************************************
+  // 15. GEOLOCATOR
+  // *********************************************************
+  BlocProvider<GeolocatorBloc>(
+    create: (_) => GeolocatorBloc(locator<GeolocatorUseCases>()),
+  ),
+
+  // *********************************************************
+  // 16. PROGRAMACIONES
+  // *********************************************************
+  BlocProvider<ProgramacionesBloc>(
+    create: (_) => ProgramacionesBloc(locator<ProgramacionesUseCases>()),
+  ),
+
+  // *********************************************************
+  // 17. TRACKING
+  // *********************************************************
+  BlocProvider<TrackingBloc>(
+    create: (_) => TrackingBloc(locator<TrackingUseCases>()),
+  ),
 ];

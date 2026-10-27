@@ -52,3 +52,34 @@ export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_inic
 export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_domicilios/bloc/ciudadano_domicilios_bloc.dart';
 export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_domicilios/bloc/ciudadano_domicilios_event.dart';
 export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_domicilios/bloc/ciudadano_domicilios_state.dart';
+
+// Mapa base
+export 'package:app_recoleccion_residuos/src/presentation/shared/screens/mapa/bloc/mapa_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/shared/screens/mapa/bloc/mapa_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/shared/screens/mapa/bloc/mapa_state.dart';
+export 'package:app_recoleccion_residuos/src/presentation/shared/screens/mapa/view/mapa_base_con_bloc.dart';
+
+// Directions
+export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/directions/directions_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/directions/directions_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/directions/directions_state.dart';
+
+// Geocoding
+export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/geocoding/geocoding_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/geocoding/geocoding_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/geocoding/geocoding_state.dart';
+
+// Geolocator
+export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/geolocator/geolocator_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/geolocator/geolocator_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/geolocator/geolocator_state.dart';
+
+// Programaciones
+export 'package:app_recoleccion_residuos/src/presentation/screens/programacion/bloc/programaciones_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/programacion/bloc/programaciones_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/programacion/bloc/programaciones_state.dart';
+
+// Tracking
+export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/tracking/tracking_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/tracking/tracking_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/tracking/tracking_state.dart';

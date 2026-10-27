@@ -1,10 +1,12 @@
 // Environment
 import 'package:injectable/injectable.dart';
+import 'package:http/http.dart' as http;
 import 'package:app_recoleccion_residuos/src/data/datasources/local/shared/shared_pref.dart';
 import 'package:app_recoleccion_residuos/src/config/constants/environment.dart'
     as url_backend;
 
 // DATABASE - Local
+import 'package:app_recoleccion_residuos/src/data/datasources/local/local.dart';
 
 // SERVICES - Remote
 import 'package:app_recoleccion_residuos/src/data/datasources/remote/remote.dart';
@@ -20,8 +22,23 @@ import 'package:app_recoleccion_residuos/src/domain/uses_cases.dart';
 
 @module
 abstract class Appmodule {
-  @Named('googleMapsApiKey')
-  String get googleMapsApiKey => url_backend.Environment.googleMapsAPI;
+  // @Named('googleMapsApiKey')
+  // String get googleMapsApiKey => url_backend.Environment.googleMapsAPI;
+
+  // TOKEN MAPBOX
+  @Named('mapBoxApiKey')
+  String get mapBoxApiKey => url_backend.Environment.mapboxAPI;
+
+  // MAPA
+
+  // - CLIENTE HTTP PARA DIRECTIONS Y GEOCODING
+  @lazySingleton
+  MapaRepository get mapaRepository =>
+      MapaRepositoryImpl(accessToken: mapBoxApiKey);
+
+  @lazySingleton
+  @Named('mapboxHttpClient')
+  http.Client get mapboxHttpClient => http.Client();
 
   // @lazySingleton
   // SocketRepository socketRepository() => SocketRepositoryImpl();
@@ -101,6 +118,36 @@ abstract class Appmodule {
   PrefNotificationService get prefNotificationService =>
       PrefNotificationService();
 
+  // - DIRECTIONS - SERVICE
+  // @lazySingleton
+  // DirectionsService directionsService(
+  //   @Named('mapboxHttpClient') http.Client client,
+  //   @Named('mapBoxApiKey') String token,
+  // ) {
+  //   return DirectionsService(client, token);
+  // }
+
+  @lazySingleton
+  DirectionsService get directionsService =>
+      DirectionsService(mapboxHttpClient, mapBoxApiKey);
+
+  // - GEOCODING - SERVICE
+  // @lazySingleton
+  // GeocodingService geocodingService(
+  //   @Named('mapboxHttpClient') http.Client client,
+  //   @Named('mapBoxApiKey') String token,
+  // ) {
+  //   return GeocodingService(client, token);
+  // }
+
+  @lazySingleton
+  GeocodingService get geocodingService =>
+      GeocodingService(mapboxHttpClient, mapBoxApiKey);
+
+  // - GEOLOCATOR - SERVICE
+  @lazySingleton
+  GeolocatorService get geolocatorService => GeolocatorService();
+
   // =============================================================
   // 2. REPOSITORY
   // =============================================================
@@ -154,6 +201,41 @@ abstract class Appmodule {
   @injectable
   PrefNotificationRepository get prefNotificationRepository =>
       PrefNotificationRepositoryImpl(prefNotificationService, authRepository);
+
+  // - Mapa
+  // @injectable
+  // MapaRepository get mapaRepository => MapaRepositoryImpl(
+  //   getConfiguracionInicial: GetConfiguracionInicialUC(mapaRepository),
+  // );
+
+  // - DIRECTIONS - REPOSITORY
+  @lazySingleton
+  DirectionsRepository get directionsRepository =>
+      DirectionsRepositoryImpl(directionsService);
+
+  // @lazySingleton
+  // DirectionsRepository directionsRepository(DirectionsService service) {
+  //   return DirectionsRepositoryImpl(service);
+  // }
+
+  // GEOCODING - REPOSITORY
+  @lazySingleton
+  GeocodingRepository get geocodingRepository =>
+      GeocodingRepositoryImpl(geocodingService);
+
+  // @lazySingleton
+  // GeocodingRepository geocodingRepository(GeocodingService service) {
+  //   return GeocodingRepositoryImpl(service);
+  // }
+
+  // GEOLOCATOR - REPOSITORY
+  @lazySingleton
+  GeolocatorRepository get geolocatorRepository =>
+      GeolocatorRepositoryImpl(geolocatorService);
+  // @lazySingleton
+  // GeolocatorRepository geolocatorRepository(GeolocatorService service) {
+  //   return GeolocatorRepositoryImpl(service);
+  // }
 
   // =============================================================
   // 3. USES CASES
@@ -270,6 +352,42 @@ abstract class Appmodule {
           prefNotificationRepository,
         ),
       );
+
+  // - Mapa
+  @injectable
+  MapaUsesCase get mapaUsesCases => MapaUsesCase(
+    getConfiguracionInicial: GetConfiguracionInicialUC(mapaRepository),
+  );
+
+  // - Directions
+  @injectable
+  DirectionsUseCases get directionsUsesCases =>
+      DirectionsUseCases(calcularRuta: CalcularRutaUC(directionsRepository));
+
+  // - Geocoding
+  @injectable
+  GeocodingUseCases get geocodingUsesCases => GeocodingUseCases(
+    buscarDireccion: BuscarDireccionUC(geocodingRepository),
+    obtenerDireccion: ObtenerDireccionUC(geocodingRepository),
+  );
+
+  // Geolocator
+  @injectable
+  GeolocatorUseCases get geolocatorUsesCases => GeolocatorUseCases(
+    abrirConfiguracionAplicacion: AbrirConfiguracionAplicacionUC(
+      geolocatorRepository,
+    ),
+    abrirConfiguracionUbicacion: AbrirConfiguracionUbicacionUC(
+      geolocatorRepository,
+    ),
+    estaServicioHabilitado: EstaServicioHabilitadoUC(geolocatorRepository),
+    observarEstadoServicio: ObservarEstadoServicioUC(geolocatorRepository),
+    observarUbicacion: ObservarUbicacionUC(geolocatorRepository),
+    obtenerUbicacionActual: ObtenerUbicacionActualUC(geolocatorRepository),
+    obtenerUltimaUbicacion: ObtenerUltimaUbicacionUC(geolocatorRepository),
+    solicitarPermiso: SolicitarPermisoUC(geolocatorRepository),
+    verificarPermiso: VerificarPermisoUC(geolocatorRepository),
+  );
 
   // =============================================================
   // 4. SOCKETS

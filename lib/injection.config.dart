@@ -10,6 +10,8 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
+import 'package:app_recoleccion_residuos/src/data/datasources/local/local.dart'
+    as _i972;
 import 'package:app_recoleccion_residuos/src/data/datasources/local/shared/shared_pref.dart'
     as _i454;
 import 'package:app_recoleccion_residuos/src/data/datasources/remote/remote.dart'
@@ -18,6 +20,7 @@ import 'package:app_recoleccion_residuos/src/di/AppModule.dart' as _i746;
 import 'package:app_recoleccion_residuos/src/domain/repositories.dart' as _i704;
 import 'package:app_recoleccion_residuos/src/domain/uses_cases.dart' as _i1034;
 import 'package:get_it/get_it.dart' as _i174;
+import 'package:http/http.dart' as _i519;
 import 'package:injectable/injectable.dart' as _i526;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -89,9 +92,34 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1034.PrefNotificationUseCases>(
       () => appmodule.prefNotificationUsesCases,
     );
+    gh.factory<_i1034.MapaUsesCase>(() => appmodule.mapaUsesCases);
+    gh.factory<_i1034.DirectionsUseCases>(() => appmodule.directionsUsesCases);
+    gh.factory<_i1034.GeocodingUseCases>(() => appmodule.geocodingUsesCases);
+    gh.factory<_i1034.GeolocatorUseCases>(() => appmodule.geolocatorUsesCases);
+    gh.lazySingleton<_i704.MapaRepository>(() => appmodule.mapaRepository);
+    gh.lazySingleton<_i322.DirectionsService>(
+      () => appmodule.directionsService,
+    );
+    gh.lazySingleton<_i322.GeocodingService>(() => appmodule.geocodingService);
+    gh.lazySingleton<_i972.GeolocatorService>(
+      () => appmodule.geolocatorService,
+    );
+    gh.lazySingleton<_i704.DirectionsRepository>(
+      () => appmodule.directionsRepository,
+    );
+    gh.lazySingleton<_i704.GeocodingRepository>(
+      () => appmodule.geocodingRepository,
+    );
+    gh.lazySingleton<_i704.GeolocatorRepository>(
+      () => appmodule.geolocatorRepository,
+    );
     gh.factory<String>(
-      () => appmodule.googleMapsApiKey,
-      instanceName: 'googleMapsApiKey',
+      () => appmodule.mapBoxApiKey,
+      instanceName: 'mapBoxApiKey',
+    );
+    gh.lazySingleton<_i519.Client>(
+      () => appmodule.mapboxHttpClient,
+      instanceName: 'mapboxHttpClient',
     );
     return this;
   }

@@ -82,7 +82,9 @@ export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/create_ciuda
 export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/get_ciudadano_perfil_model.dart';
 export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/update_ciudadano_perfil_model.dart';
 
+// =======================================================
 // Domicilios
+// =======================================================
 export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/create_ciudadano_domicilio_model.dart';
 export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/get_mis_domicilios_model.dart';
 export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/update_ciudadano_domicilio_model.dart';
@@ -90,6 +92,13 @@ export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/set_principa
 export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/get_domicilio_cronograma_model.dart';
 export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/delete_ciudadano_domicilio_model.dart';
 
+// =======================================================
 // Preferencias
+// =======================================================
 export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/get_ciudadano_preferencias_model.dart';
 export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/update_ciudadano_preferencias_model.dart';
+
+// =======================================================
+// Mapa
+// =======================================================
+export 'package:app_recoleccion_residuos/src/data/models/mapa/mapa_configuracion.dart';

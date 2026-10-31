@@ -129,3 +129,17 @@ export 'package:app_recoleccion_residuos/src/domain/use_cases/geolocator/geoloca
 export 'package:app_recoleccion_residuos/src/domain/use_cases/geolocator/geolocator_use_cases/VerificarPermisoUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/geolocator/geolocator_use_cases/obtenerUltimaUbicacionUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/geolocator/GeolocatorUseCases.dart';
+
+// =======================================================================
+// INCIDENCIAS
+// =======================================================================
+export 'package:app_recoleccion_residuos/src/domain/use_cases/incidencias/incidencias_use_cases/AgregarArchivosUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/incidencias/incidencias_use_cases/ChangeIncidenciaEstadoUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/incidencias/incidencias_use_cases/CreateIncidenciaUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/incidencias/incidencias_use_cases/DeleteArchivoUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/incidencias/incidencias_use_cases/GetArchivosPorIncidenciaUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/incidencias/incidencias_use_cases/GetIncidenciaByIdUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/incidencias/incidencias_use_cases/GetIncidenciasPaginadasUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/incidencias/incidencias_use_cases/UpdateIncidenciaUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/incidencias/incidencias_use_cases/getArchivoPorIdUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/incidencias/IncidenciasUseCases.dart';

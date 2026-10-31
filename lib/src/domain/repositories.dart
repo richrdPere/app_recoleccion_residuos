@@ -1,3 +1,5 @@
+export 'package:app_recoleccion_residuos/src/domain/repositories/incidencias_repository.dart';
+
 export 'package:app_recoleccion_residuos/src/domain/repositories/geolocator_repository.dart';
 
 export 'package:app_recoleccion_residuos/src/domain/repositories/geocoding_repository.dart';

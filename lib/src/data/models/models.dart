@@ -102,3 +102,16 @@ export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/update_ciuda
 // Mapa
 // =======================================================
 export 'package:app_recoleccion_residuos/src/data/models/mapa/mapa_configuracion.dart';
+
+// =======================================================
+// Incidencias
+// =======================================================
+export 'package:app_recoleccion_residuos/src/data/models/incidencias/get_incidencia_paginado.model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/incidencias/get_incidencia_detalle.model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/incidencias/agregar_incidencia_archivos_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/incidencias/create_incidencia_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/incidencias/get_incidencia_archivos_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/incidencias/delete_incidencia_archivo_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/incidencias/get_incidencia_archivo_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/incidencias/update_incidencia_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/incidencias/change_incidencia_estado_model.dart';

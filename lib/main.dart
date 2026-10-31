@@ -12,6 +12,19 @@ import 'package:app_recoleccion_residuos/src/config/theme/app_theme.dart';
 // Listeners
 import 'package:app_recoleccion_residuos/src/config/core/listenners/auth_listener.dart';
 
+// Firebase
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+import 'firebase_options.dart';
+
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Aquí no se navega ni se accede a widgets.
+}
+
 // *********************************************************
 // 1. CLAVE GLOBAL PARA MENSAJES
 // *********************************************************
@@ -20,8 +33,13 @@ final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 // *********************************************************
 // 2. INICIALIZACIÓN
 // *********************************************************
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
   await configureDependencies();
 

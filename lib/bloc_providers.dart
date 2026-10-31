@@ -127,4 +127,11 @@ List<BlocProvider> blocProviders = [
   BlocProvider<TrackingBloc>(
     create: (_) => TrackingBloc(locator<TrackingUseCases>()),
   ),
+
+  // *********************************************************
+  // 18. INCIDENCIAS
+  // *********************************************************
+    BlocProvider<IncidenciasBloc>(
+    create: (_) => IncidenciasBloc(locator<IncidenciasUseCases>()),
+  ),
 ];

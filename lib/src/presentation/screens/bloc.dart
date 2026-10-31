@@ -83,3 +83,8 @@ export 'package:app_recoleccion_residuos/src/presentation/screens/programacion/b
 export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/tracking/tracking_bloc.dart';
 export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/tracking/tracking_event.dart';
 export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/tracking/tracking_state.dart';
+
+// Incidencias
+export 'package:app_recoleccion_residuos/src/presentation/screens/incidencias/bloc/incidencias_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/incidencias/bloc/incidencias_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/incidencias/bloc/incidencias_state.dart';

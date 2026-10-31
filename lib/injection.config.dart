@@ -48,6 +48,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i322.PrefNotificationService>(
       () => appmodule.prefNotificationService,
     );
+    gh.factory<_i322.IncidenciasService>(() => appmodule.incidenciasService);
     gh.factory<_i704.AuthRepository>(() => appmodule.authRepository);
     gh.factory<_i704.DispositivoRepository>(
       () => appmodule.dispositivoRepository,
@@ -72,6 +73,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i704.PrefNotificationRepository>(
       () => appmodule.prefNotificationRepository,
     );
+    gh.factory<_i704.IncidenciasRepository>(
+      () => appmodule.incidenciasRepository,
+    );
     gh.factory<_i1034.AuthUsesCases>(() => appmodule.authUseCases);
     gh.factory<_i1034.DispositivosUseCases>(
       () => appmodule.dispositivosUseCases,
@@ -91,6 +95,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1034.DomiciliosUseCases>(() => appmodule.domiciliosUsesCases);
     gh.factory<_i1034.PrefNotificationUseCases>(
       () => appmodule.prefNotificationUsesCases,
+    );
+    gh.factory<_i1034.IncidenciasUseCases>(
+      () => appmodule.incidenciasUsesCases,
     );
     gh.factory<_i1034.MapaUsesCase>(() => appmodule.mapaUsesCases);
     gh.factory<_i1034.DirectionsUseCases>(() => appmodule.directionsUsesCases);

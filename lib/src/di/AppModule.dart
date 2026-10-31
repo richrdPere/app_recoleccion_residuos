@@ -118,6 +118,9 @@ abstract class Appmodule {
   PrefNotificationService get prefNotificationService =>
       PrefNotificationService();
 
+  @injectable // Incidencias
+  IncidenciasService get incidenciasService => IncidenciasService();
+
   // - DIRECTIONS - SERVICE
   // @lazySingleton
   // DirectionsService directionsService(
@@ -201,6 +204,11 @@ abstract class Appmodule {
   @injectable
   PrefNotificationRepository get prefNotificationRepository =>
       PrefNotificationRepositoryImpl(prefNotificationService, authRepository);
+
+  // - Incidencias
+  @injectable
+  IncidenciasRepository get incidenciasRepository =>
+      IncidenciasRepositoryImpl(incidenciasService, authRepository);
 
   // - Mapa
   // @injectable
@@ -352,6 +360,20 @@ abstract class Appmodule {
           prefNotificationRepository,
         ),
       );
+
+  // - Incidencias
+  @injectable
+  IncidenciasUseCases get incidenciasUsesCases => IncidenciasUseCases(
+    agregarArchivos: AgregarArchivosUC(incidenciasRepository),
+    changeIncidenciaEstado: ChangeIncidenciaEstadoUC(incidenciasRepository),
+    createIncidencia: CreateIncidenciaUC(incidenciasRepository),
+    deleteArchivo: DeleteArchivoUC(incidenciasRepository),
+    getArchivoPorId: GetArchivoPorIdUC(incidenciasRepository),
+    getArchivosPorIncidencia: GetArchivosPorIncidenciaUC(incidenciasRepository),
+    getIncidenciaById: GetIncidenciaByIdUC(incidenciasRepository),
+    getIncidenciasPaginadas: GetIncidenciasPaginadasUC(incidenciasRepository),
+    updateIncidencia: UpdateIncidenciaUC(incidenciasRepository),
+  );
 
   // - Mapa
   @injectable

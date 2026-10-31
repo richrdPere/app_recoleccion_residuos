@@ -1,5 +1,7 @@
 // SERVICES
 
+export 'package:app_recoleccion_residuos/src/data/datasources/remote/services/incidencias_service.dart';
+
 export 'package:app_recoleccion_residuos/src/data/datasources/remote/services/pref_notification_service.dart';
 
 export 'package:app_recoleccion_residuos/src/data/datasources/remote/services/domicilios_service.dart';

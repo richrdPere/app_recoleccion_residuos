@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1057829951686",
+    "project_id": "sis-recoleccion-residuos",
+    "storage_bucket": "sis-recoleccion-residuos.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1057829951686:android:77a44fd4a835ad75131fc7",
+        "android_client_info": {
+          "package_name": "com.example.app_recoleccion_residuos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkz8y-ORZSHr1QL0hpkMq6hlUwztCo3ag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

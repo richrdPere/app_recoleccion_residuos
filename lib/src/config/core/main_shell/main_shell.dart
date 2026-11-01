@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 // Widget
 import 'package:app_recoleccion_residuos/src/presentation/shared/widgets/customs/custom_bottom_navigation.dart';
+import 'package:app_recoleccion_residuos/src/presentation/screens/notificaciones/view/widgets/notifications_bell.dart';
 
 class MainShell extends StatelessWidget {
   final Widget child;
@@ -48,6 +49,16 @@ class MainShell extends StatelessWidget {
 
     return Scaffold(
       body: child,
+      floatingActionButton: Material(
+        elevation: 4,
+        color: Theme.of(context).colorScheme.primaryContainer,
+        shape: const CircleBorder(),
+        child: const Padding(
+          padding: EdgeInsets.all(4),
+          child: NotificationsBell(),
+        ),
+      ),
+
       bottomNavigationBar: CustomBottomNavigation(
         currentIndex: currentIndex,
         onTap: (index) {

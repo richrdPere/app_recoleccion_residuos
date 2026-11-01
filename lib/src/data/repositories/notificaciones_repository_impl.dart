@@ -27,7 +27,10 @@ class NotificacionesRepositoryImpl implements NotificacionesRepository {
       return ErrorData(message: 'No existe una sesión iniciada.');
     }
 
-    return await notificacionesService.getMisNotificaciones(token: token);
+    return await notificacionesService.getMisNotificaciones(
+      token: token,
+      query: query,
+    );
   }
 
   // *********************************************************

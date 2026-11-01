@@ -20,7 +20,7 @@ class NotificacionesService {
 
   // Bandeja personal
   String get API_GET_MIS_NOTIFICACIONES => '$API_BASE/mis-notificaciones';
-  String get API_GET_TOTAL_NO_LEIDAS => '$API_BASE/no-leidas/';
+  String get API_GET_TOTAL_NO_LEIDAS => '$API_BASE/no-leidas/total';
   String get API_MARK_NOTIFICATION_NO_LEIDAS => '$API_BASE/leer-todas';
 
   // Operaciones individuales

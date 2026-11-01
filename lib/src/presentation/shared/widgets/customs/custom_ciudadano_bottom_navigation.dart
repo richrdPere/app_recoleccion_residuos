@@ -1,4 +1,7 @@
+import 'package:app_recoleccion_residuos/src/presentation/screens/notificaciones/cubit/notificaciones_cubit.dart';
+import 'package:app_recoleccion_residuos/src/presentation/screens/notificaciones/cubit/notificaciones_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CiudadanoBottomNavigation extends StatelessWidget {
   final int currentIndex;
@@ -25,7 +28,7 @@ class CiudadanoBottomNavigation extends StatelessWidget {
         indicatorColor: colors.secondaryContainer,
         elevation: 0,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-        destinations: const [
+        destinations: [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home_rounded),
@@ -37,10 +40,27 @@ class CiudadanoBottomNavigation extends StatelessWidget {
             label: 'Mapa',
           ),
           NavigationDestination(
-            icon: Icon(Icons.notifications_outlined),
-            selectedIcon: Icon(Icons.notifications_rounded),
+            icon: BlocBuilder<NotificacionesCubit, NotificacionesState>(
+              builder: (_, state) => Badge(
+                isLabelVisible: state.unread > 0,
+                label: Text(state.unread > 99 ? '99+' : '${state.unread}'),
+                child: const Icon(Icons.notifications_outlined),
+              ),
+            ),
+            selectedIcon: BlocBuilder<NotificacionesCubit, NotificacionesState>(
+              builder: (_, state) => Badge(
+                isLabelVisible: state.unread > 0,
+                label: Text(state.unread > 99 ? '99+' : '${state.unread}'),
+                child: const Icon(Icons.notifications_rounded),
+              ),
+            ),
             label: 'Alertas',
           ),
+          // NavigationDestination(
+          //   icon: Icon(Icons.notifications_outlined),
+          //   selectedIcon: Icon(Icons.notifications_rounded),
+          //   label: 'Alertas',
+          // ),
           NavigationDestination(
             icon: Icon(Icons.person_outline_rounded),
             selectedIcon: Icon(Icons.person_rounded),

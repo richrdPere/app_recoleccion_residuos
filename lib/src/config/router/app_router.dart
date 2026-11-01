@@ -58,6 +58,36 @@ final appRouter = GoRouter(
       builder: (_, _) => const RegisterPage(),
     ),
 
+    GoRoute(
+      path: '/notificaciones',
+      name: 'notificaciones',
+      builder: (_, _) => const NotificacionesPage(),
+      routes: [
+        GoRoute(
+          path: ':id',
+          name: 'notificacion-detalle',
+          builder: (_, state) {
+            final id = int.tryParse(state.pathParameters['id'] ?? '');
+
+            if (id == null || id <= 0) {
+              return Scaffold(
+                appBar: AppBar(title: const Text('Notificación')),
+                body: const Center(
+                  child: Text(
+                    'El identificador de la notificación no es válido.',
+                  ),
+                ),
+              );
+            }
+
+            return NotificacionDetallePage(
+              id: id,
+              citizen: state.uri.queryParameters['area'] == 'ciudadano',
+            );
+          },
+        ),
+      ],
+    ),
     // *******************************************************
     // OPERACIONES
     // *******************************************************
@@ -117,8 +147,7 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/ciudadano/alertas',
           name: 'ciudadano-alertas',
-          builder: (context, state) =>
-              const Center(child: Text('Alertas ciudadanas')),
+          builder: (_, _) => const NotificacionesPage(citizen: true),
         ),
         GoRoute(
           path: '/ciudadano/perfil',

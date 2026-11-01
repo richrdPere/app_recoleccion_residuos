@@ -1,3 +1,4 @@
+import 'package:app_recoleccion_residuos/src/config/core/notifications/fcm_session_coordinator.dart';
 import 'package:app_recoleccion_residuos/injection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -6,6 +7,7 @@ import 'package:app_recoleccion_residuos/src/domain/uses_cases.dart';
 
 // Bloc
 import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
+import 'package:app_recoleccion_residuos/src/presentation/screens/notificaciones/cubit/notificaciones_cubit.dart';
 
 List<BlocProvider> blocProviders = [
   // *********************************************************
@@ -13,8 +15,10 @@ List<BlocProvider> blocProviders = [
   // *********************************************************
   BlocProvider<SessionBloc>(
     lazy: false,
-    create: (_) =>
-        SessionBloc(locator<AuthUsesCases>())..add(const SessionStarted()),
+    create: (_) => SessionBloc(
+      locator<AuthUsesCases>(),
+      beforeLogout: locator<FcmSessionCoordinator>().beforeLogout,
+    )..add(const SessionStarted()),
   ),
 
   // *********************************************************
@@ -131,7 +135,15 @@ List<BlocProvider> blocProviders = [
   // *********************************************************
   // 18. INCIDENCIAS
   // *********************************************************
-    BlocProvider<IncidenciasBloc>(
+  BlocProvider<IncidenciasBloc>(
     create: (_) => IncidenciasBloc(locator<IncidenciasUseCases>()),
+  ),
+
+  // *********************************************************
+  // 19. NOTIFICACIONES
+  // *********************************************************
+  BlocProvider<NotificacionesCubit>(
+    lazy: false,
+    create: (_) => NotificacionesCubit(locator<NotificacionesUseCases>()),
   ),
 ];

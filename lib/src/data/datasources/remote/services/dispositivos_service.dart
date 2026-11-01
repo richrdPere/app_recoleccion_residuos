@@ -18,7 +18,7 @@ import 'package:app_recoleccion_residuos/src/data/models/models.dart';
 
 class DispositivosService {
   // APIS
-  String get API_BASE => '${url_backend.Environment.mainUrl}/notificaciones';
+  String get API_BASE => '${url_backend.Environment.mainUrl}/notificaciones/dispositivos';
 
   String get API_REGISTRAR_DISPOSITIVO => '${this.API_BASE}/register';
   String get API_GET_MIS_DISPOSITIVOS => '${this.API_BASE}/mis-dispositivos';

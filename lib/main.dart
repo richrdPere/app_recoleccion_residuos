@@ -5,12 +5,22 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:app_recoleccion_residuos/injection.dart';
 import 'package:app_recoleccion_residuos/bloc_providers.dart';
 
+// Services
+import 'package:app_recoleccion_residuos/src/data/datasources/local/services/local_notification_service.dart';
+
+// Uses cases
+import 'package:app_recoleccion_residuos/src/domain/uses_cases.dart';
+
 // Config
 import 'package:app_recoleccion_residuos/src/config/router/app_router.dart';
 import 'package:app_recoleccion_residuos/src/config/theme/app_theme.dart';
 
 // Listeners
 import 'package:app_recoleccion_residuos/src/config/core/listenners/auth_listener.dart';
+import 'package:app_recoleccion_residuos/src/config/core/notifications/fcm_session_coordinator.dart';
+import 'package:app_recoleccion_residuos/src/config/core/listenners/fcm_session_listener.dart';
+import 'package:app_recoleccion_residuos/src/config/core/listenners/notifications_listener.dart';
+import 'package:app_recoleccion_residuos/src/config/core/listenners/socket_session_listener.dart';
 
 // Firebase
 import 'package:firebase_core/firebase_core.dart';
@@ -42,6 +52,8 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
   await configureDependencies();
+
+  await LocalNotificationsService.instance.initialize();
 
   runApp(const MyApp());
 }
@@ -78,7 +90,15 @@ class MyApp extends StatelessWidget {
             AuthListener(
               router: appRouter,
               scaffoldMessengerKey: rootScaffoldMessengerKey,
-              child: child ?? const SizedBox.shrink(),
+              child: FcmSessionListener(
+                coordinator: locator<FcmSessionCoordinator>(),
+                child: SocketSessionListener(
+                  child: NotificationsListener(
+                    useCases: locator<NotificacionesUseCases>(),
+                    child: child ?? const SizedBox.shrink(),
+                  ),
+                ),
+              ),
             ),
           );
         },

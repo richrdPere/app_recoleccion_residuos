@@ -11,9 +11,12 @@ import 'session_state.dart';
 
 class SessionBloc extends Bloc<SessionEvent, SessionState> {
   final AuthUsesCases authUseCases;
+  final Future<void> Function() beforeLogout;
+
   bool _refreshInProgress = false;
 
-  SessionBloc(this.authUseCases) : super(const SessionState()) {
+  SessionBloc(this.authUseCases, {required this.beforeLogout})
+    : super(const SessionState()) {
     on<SessionStarted>(_onSessionStarted);
     on<SessionEstablished>(_onSessionEstablished);
     on<SessionLogoutRequested>(_onSessionLogoutRequested);
@@ -143,6 +146,10 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
         );
         return;
       }
+
+      // Desactivar push mientras todavía podemos autenticar
+      // la petición contra el backend.
+      await beforeLogout();
 
       // 2. CERRAR SESIÓN REMOTA
       final response = await authUseCases.logoutSession.run(

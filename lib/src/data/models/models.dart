@@ -31,6 +31,7 @@ export 'package:app_recoleccion_residuos/src/data/models/recorrido/iniciar_recor
 export 'package:app_recoleccion_residuos/src/data/models/recorrido/mis-recorridos/mis_recorridos_model.dart';
 export 'package:app_recoleccion_residuos/src/data/models/recorrido/pausar_recorrido/pausar_recorrido_req.dart';
 export 'package:app_recoleccion_residuos/src/data/models/recorrido/reanudar_recorrido/reanudar_recorrido_req.dart';
+export 'package:app_recoleccion_residuos/src/data/models/recorrido/mis-recorridos/historial_filtros.dart';
 
 // =======================================================
 // RECOLECCION

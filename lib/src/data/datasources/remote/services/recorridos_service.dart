@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 // Environment
@@ -338,10 +337,6 @@ class RecorridoService {
         );
       });
 
-      debugPrint("========================================================");
-      debugPrint("api: $apiResponse");
-      debugPrint("========================================================");
-
       return Success<ApiResponse<RecorridoDataModel?>>(apiResponse);
     } on TimeoutException catch (error) {
       return ErrorData<ApiResponse<RecorridoDataModel?>>(
@@ -364,6 +359,7 @@ class RecorridoService {
     required String token,
     int page = 1,
     int limit = 10,
+    HistorialFiltros filtros = const HistorialFiltros(),
   }) async {
     try {
       // 1. VALIDAR PAGINACIÓN
@@ -375,7 +371,11 @@ class RecorridoService {
 
       // 2. CONSTRUIR URL
       final uri = Uri.parse(API_GET_MIS_RECORRIDOS).replace(
-        queryParameters: {'page': page.toString(), 'limit': limit.toString()},
+        queryParameters: {
+          'page': page.toString(),
+          'limit': limit.toString(),
+          ...filtros.toQueryParameters(),
+        },
       );
 
       // 3. PETICIÓN HTTP

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Blocs
@@ -45,6 +46,8 @@ class _HomePageState extends State<HomePage> {
     context.read<ProgramacionesBloc>().add(
       ObtenerProgramacionDetalle(idProgramacion: asignacion.idProgramacion),
     );
+
+    context.goNamed('mi_recorrido');
   }
 
   void _consultarAsignaciones() {

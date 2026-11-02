@@ -5,6 +5,7 @@ import 'package:app_recoleccion_residuos/src/domain/utils/resource.dart';
 
 import 'package:app_recoleccion_residuos/src/presentation/screens/recorrido/bloc/recorrido_state.dart';
 import 'package:app_recoleccion_residuos/src/presentation/shared/widgets/app_widgets/app_bar_title_screen.dart';
+import 'widgets/historial_recorrido_tile.dart';
 
 class HistorialContent extends StatelessWidget {
   final RecorridoState state;
@@ -12,12 +13,28 @@ class HistorialContent extends StatelessWidget {
   final Future<void> Function() onRefresh;
   final Future<void> Function(int page) onPageChanged;
 
+  final HistorialFiltros filtros;
+
+  final VoidCallback onBuscar;
+  final VoidCallback onAbrirFiltros;
+
+  final VoidCallback onQuitarBusqueda;
+  final VoidCallback onLimpiarFiltros;
+
+  final ValueChanged<MiRecorridoItemModel> onAbrirRecorrido;
+
   const HistorialContent({
     super.key,
     required this.state,
     required this.solicitudPendiente,
     required this.onRefresh,
     required this.onPageChanged,
+    required this.filtros,
+    required this.onBuscar,
+    required this.onAbrirFiltros,
+    required this.onQuitarBusqueda,
+    required this.onLimpiarFiltros,
+    required this.onAbrirRecorrido,
   });
 
   bool get _isBusy => solicitudPendiente || state.isLoadingHistorial;
@@ -44,6 +61,27 @@ class HistorialContent extends StatelessWidget {
       appBar: AppBarTitleScreen(
         title: 'Mi historial',
         actions: [
+          // Buscador
+          AppBarTitleAction(
+            icon: Icons.search_rounded,
+            tooltip: filtros.tieneBusqueda
+                ? 'Cambiar búsqueda'
+                : 'Buscar en el historial',
+            color: filtros.tieneBusqueda ? colors.primary : null,
+            onPressed: _isBusy ? null : onBuscar,
+          ),
+
+          // Filtros
+          AppBarTitleAction(
+            icon: Icons.tune_rounded,
+            tooltip: filtros.cantidadFiltros > 0
+                ? 'Filtros: ${filtros.cantidadFiltros} activos'
+                : 'Filtrar historial',
+            color: filtros.cantidadFiltros > 0 ? colors.primary : null,
+            onPressed: _isBusy ? null : onAbrirFiltros,
+          ),
+
+          // Botón de actualización
           AppBarTitleAction(
             icon: Icons.refresh_rounded,
             tooltip: _isBusy
@@ -81,6 +119,52 @@ class HistorialContent extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+                          if (filtros.tieneBusqueda ||
+                              filtros.cantidadFiltros > 0) ...[
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: [
+                                if (filtros.tieneBusqueda)
+                                  InputChip(
+                                    avatar: const Icon(
+                                      Icons.search_rounded,
+                                      size: 18,
+                                    ),
+                                    label: ConstrainedBox(
+                                      constraints: const BoxConstraints(
+                                        maxWidth: 200,
+                                      ),
+                                      child: Text(
+                                        filtros.search,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    onDeleted: _isBusy
+                                        ? null
+                                        : onQuitarBusqueda,
+                                  ),
+
+                                if (filtros.cantidadFiltros > 0)
+                                  InputChip(
+                                    avatar: const Icon(
+                                      Icons.tune_rounded,
+                                      size: 18,
+                                    ),
+                                    label: Text(
+                                      '${filtros.cantidadFiltros} filtros activos',
+                                    ),
+                                    onPressed: _isBusy ? null : onAbrirFiltros,
+                                    onDeleted: _isBusy
+                                        ? null
+                                        : onLimpiarFiltros,
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+
                           if (_isBusy) ...[
                             const LinearProgressIndicator(),
                             const SizedBox(height: 16),
@@ -109,13 +193,29 @@ class HistorialContent extends StatelessWidget {
                             ],
                             _buildSummary(context, historial),
                             const SizedBox(height: 20),
+                            // if (historial.items.isEmpty)
+                            //   _buildEmpty(context)
+                            // else
+                            //   ...historial.items.map(
+                            //     (item) => Padding(
+                            //       padding: const EdgeInsets.only(bottom: 12),
+                            //       child: _buildItem(context, item),
+                            //     ),
+                            //   ),
                             if (historial.items.isEmpty)
                               _buildEmpty(context)
                             else
                               ...historial.items.map(
                                 (item) => Padding(
                                   padding: const EdgeInsets.only(bottom: 12),
-                                  child: _buildItem(context, item),
+                                  child: HistorialRecorridoTile(
+                                    key: ValueKey(
+                                      'historial-recorrido-${item.idRecorrido}',
+                                    ),
+                                    recorrido: item,
+                                    habilitado: !_isBusy,
+                                    onTap: () => onAbrirRecorrido(item),
+                                  ),
                                 ),
                               ),
                             const SizedBox(height: 8),
@@ -242,77 +342,77 @@ class HistorialContent extends StatelessWidget {
   // *********************************************************
   // 5. TARJETA DE RECORRIDO
   // *********************************************************
-  Widget _buildItem(BuildContext context, MiRecorridoItemModel item) {
-    final programacion = item.programacion;
-    final ruta = programacion.ruta;
-    final vehiculo = programacion.vehiculo;
-    final colors = Theme.of(context).colorScheme;
+  // Widget _buildItem(BuildContext context, MiRecorridoItemModel item) {
+  //   final programacion = item.programacion;
+  //   final ruta = programacion.ruta;
+  //   final vehiculo = programacion.vehiculo;
+  //   final colors = Theme.of(context).colorScheme;
 
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: ExpansionTile(
-        key: PageStorageKey('historial-recorrido-${item.idRecorrido}'),
-        tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        leading: Icon(Icons.route_rounded, color: colors.primary),
-        title: Text(
-          'Recorrido #${item.idRecorrido}',
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 6),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(ruta.nombre),
-              const SizedBox(height: 4),
-              Text(_fecha(item.fechaHoraInicio)),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: [
-                  Chip(
-                    label: Text(_label(item.estadoRecorrido)),
-                    visualDensity: VisualDensity.compact,
-                  ),
-                  Chip(
-                    label: Text(_label(item.miAsignacion.funcion)),
-                    visualDensity: VisualDensity.compact,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        children: [
-          const Divider(),
-          _dato('Programación', '#${item.idProgramacion}'),
-          _dato('Ruta', '${ruta.codigo} · ${ruta.nombre}'),
-          _dato('Vehículo', '${vehiculo.codigo} · ${vehiculo.placa}'),
-          _dato('Turno', _label(programacion.turno)),
-          _dato('Inicio', _fecha(item.fechaHoraInicio)),
-          _dato('Finalización', _fecha(item.fechaHoraFinalizacion)),
-          _dato('Duración registrada', _duracion(item.duracionSegundos)),
-          _dato(
-            'Distancia registrada',
-            item.distanciaRecorridaMetros == null
-                ? '—'
-                : '${(item.distanciaRecorridaMetros! / 1000).toStringAsFixed(2)} km',
-          ),
-          if (item.observacionInicio?.trim().isNotEmpty == true)
-            _observacion('Observación de inicio', item.observacionInicio!),
-          if (item.observacionFinalizacion?.trim().isNotEmpty == true)
-            _observacion(
-              'Observación de finalización',
-              item.observacionFinalizacion!,
-            ),
-          if (item.motivoCancelacion?.trim().isNotEmpty == true)
-            _observacion('Motivo de cancelación', item.motivoCancelacion!),
-        ],
-      ),
-    );
-  }
+  //   return Card(
+  //     clipBehavior: Clip.antiAlias,
+  //     child: ExpansionTile(
+  //       key: PageStorageKey('historial-recorrido-${item.idRecorrido}'),
+  //       tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  //       childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+  //       leading: Icon(Icons.route_rounded, color: colors.primary),
+  //       title: Text(
+  //         'Recorrido #${item.idRecorrido}',
+  //         style: const TextStyle(fontWeight: FontWeight.w600),
+  //       ),
+  //       subtitle: Padding(
+  //         padding: const EdgeInsets.only(top: 6),
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Text(ruta.nombre),
+  //             const SizedBox(height: 4),
+  //             Text(_fecha(item.fechaHoraInicio)),
+  //             const SizedBox(height: 8),
+  //             Wrap(
+  //               spacing: 8,
+  //               runSpacing: 4,
+  //               children: [
+  //                 Chip(
+  //                   label: Text(_label(item.estadoRecorrido)),
+  //                   visualDensity: VisualDensity.compact,
+  //                 ),
+  //                 Chip(
+  //                   label: Text(_label(item.miAsignacion.funcion)),
+  //                   visualDensity: VisualDensity.compact,
+  //                 ),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //       children: [
+  //         const Divider(),
+  //         _dato('Programación', '#${item.idProgramacion}'),
+  //         _dato('Ruta', '${ruta.codigo} · ${ruta.nombre}'),
+  //         _dato('Vehículo', '${vehiculo.codigo} · ${vehiculo.placa}'),
+  //         _dato('Turno', _label(programacion.turno)),
+  //         _dato('Inicio', _fecha(item.fechaHoraInicio)),
+  //         _dato('Finalización', _fecha(item.fechaHoraFinalizacion)),
+  //         _dato('Duración registrada', _duracion(item.duracionSegundos)),
+  //         _dato(
+  //           'Distancia registrada',
+  //           item.distanciaRecorridaMetros == null
+  //               ? '—'
+  //               : '${(item.distanciaRecorridaMetros! / 1000).toStringAsFixed(2)} km',
+  //         ),
+  //         if (item.observacionInicio?.trim().isNotEmpty == true)
+  //           _observacion('Observación de inicio', item.observacionInicio!),
+  //         if (item.observacionFinalizacion?.trim().isNotEmpty == true)
+  //           _observacion(
+  //             'Observación de finalización',
+  //             item.observacionFinalizacion!,
+  //           ),
+  //         if (item.motivoCancelacion?.trim().isNotEmpty == true)
+  //           _observacion('Motivo de cancelación', item.motivoCancelacion!),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   // *********************************************************
   // 6. PAGINACIÓN
@@ -362,63 +462,63 @@ class HistorialContent extends StatelessWidget {
     );
   }
 
-  Widget _dato(String titulo, String valor) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 7),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(child: Text(titulo)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              valor,
-              textAlign: TextAlign.end,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _dato(String titulo, String valor) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 7),
+  //     child: Row(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Expanded(child: Text(titulo)),
+  //         const SizedBox(width: 12),
+  //         Expanded(
+  //           child: Text(
+  //             valor,
+  //             textAlign: TextAlign.end,
+  //             style: const TextStyle(fontWeight: FontWeight.w600),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _observacion(String titulo, String texto) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(titulo, style: const TextStyle(fontWeight: FontWeight.w600)),
-          const SizedBox(height: 6),
-          Text(texto),
-        ],
-      ),
-    );
-  }
+  // Widget _observacion(String titulo, String texto) {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(top: 16),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.stretch,
+  //       children: [
+  //         Text(titulo, style: const TextStyle(fontWeight: FontWeight.w600)),
+  //         const SizedBox(height: 6),
+  //         Text(texto),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  String _label(String value) => value.replaceAll('_', ' ');
+  // String _label(String value) => value.replaceAll('_', ' ');
 
-  String _fecha(String? value) {
-    if (value == null || value.isEmpty) return '—';
+  // String _fecha(String? value) {
+  //   if (value == null || value.isEmpty) return '—';
 
-    final date = DateTime.tryParse(value)?.toLocal();
-    if (date == null) return value;
+  //   final date = DateTime.tryParse(value)?.toLocal();
+  //   if (date == null) return value;
 
-    String dos(int n) => n.toString().padLeft(2, '0');
+  //   String dos(int n) => n.toString().padLeft(2, '0');
 
-    return '${dos(date.day)}/${dos(date.month)}/${date.year} '
-        '${dos(date.hour)}:${dos(date.minute)}';
-  }
+  //   return '${dos(date.day)}/${dos(date.month)}/${date.year} '
+  //       '${dos(date.hour)}:${dos(date.minute)}';
+  // }
 
-  String _duracion(int? segundos) {
-    if (segundos == null || segundos < 0) return '—';
+  // String _duracion(int? segundos) {
+  //   if (segundos == null || segundos < 0) return '—';
 
-    final horas = segundos ~/ 3600;
-    final minutos = (segundos % 3600) ~/ 60;
+  //   final horas = segundos ~/ 3600;
+  //   final minutos = (segundos % 3600) ~/ 60;
 
-    if (horas > 0) return '${horas}h ${minutos}min';
-    if (segundos < 60) return '${segundos}s';
+  //   if (horas > 0) return '${horas}h ${minutos}min';
+  //   if (segundos < 60) return '${segundos}s';
 
-    return '${minutos}min';
-  }
+  //   return '${minutos}min';
+  // }
 }

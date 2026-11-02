@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Blocs y mapa base
@@ -179,6 +180,29 @@ class _MapaPageState extends State<MapaPage> {
   // ACCIONES
   // *********************************************************
 
+  void _centrarMiUbicacion() {
+    final ubicacion = _ubicacion;
+
+    if (ubicacion == null) {
+      _ubicacionController.solicitarUbicacion();
+      return;
+    }
+
+    unawaited(_dibujoController.centrar(ubicacion.coordenada));
+  }
+
+  void _buscarDestinoTexto(String texto) {
+    final consulta = texto.trim();
+
+    if (consulta.isEmpty) return;
+
+    setState(() {
+      _busquedaController.text = consulta;
+    });
+
+    _buscarDestino();
+  }
+
   void _buscarDestino() {
     FocusScope.of(context).unfocus();
 
@@ -189,8 +213,15 @@ class _MapaPageState extends State<MapaPage> {
   }
 
   void _seleccionarDestino(DireccionGeograficaEntity destino) {
+    if (!mounted) return;
+
     FocusScope.of(context).unfocus();
 
+    // Mostrar la dirección seleccionada en el buscador.
+    _busquedaController.text = destino.direccionFormateada;
+
+    // Tu controlador oculta los resultados y ejecuta
+    // _onDestinoSeleccionado para actualizar el mapa.
     _geocodingController.seleccionarDestino(destino);
   }
 
@@ -400,6 +431,14 @@ class _MapaPageState extends State<MapaPage> {
 
   @override
   Widget build(BuildContext context) {
+    final userId = context.select<SessionBloc, String?>((bloc) {
+      final state = bloc.state;
+
+      if (!state.isAuthenticated) return null;
+
+      return state.session!.usuario.idUsuario.toString();
+    });
+
     final idProgramacionSeleccionada = context.select<ProgramacionesBloc, int?>(
       (bloc) => _obtenerIdProgramacion(bloc.state),
     );
@@ -413,6 +452,11 @@ class _MapaPageState extends State<MapaPage> {
 
         return MapaContent(
           mapaBase: _mapaBase,
+
+          // Usuario propietario del historial.
+          userId: userId,
+
+          // Estado del mapa y buscador.
           busquedaController: _busquedaController,
           mostrarResultados: _mostrarResultados,
           ubicacionPendiente: _ubicacionController.ubicacionPendiente,
@@ -425,6 +469,10 @@ class _MapaPageState extends State<MapaPage> {
           onSolicitarUbicacion: _ubicacionController.solicitarUbicacion,
           onConsultarDireccion: _consultarMiDireccion,
           onCalcularRuta: _calcularRuta,
+
+          // Consulta y callback que recibe el texto.
+          consultaBusqueda: _busquedaController.text,
+          onBuscarDestinoTexto: _buscarDestinoTexto,
 
           // Configuración.
           onAbrirConfiguracionUbicacion:
@@ -446,7 +494,7 @@ class _MapaPageState extends State<MapaPage> {
               _preparandoAccionRecorrido ||
               _ubicacionController.ubicacionPendiente,
 
-          // Nuevos callbacks.
+          // Acciones del recorrido.
           onIniciarRecorrido: () {
             unawaited(
               _recorridoController.ejecutar(context, RecorridoAccion.iniciar),
@@ -470,6 +518,12 @@ class _MapaPageState extends State<MapaPage> {
               _recorridoController.ejecutar(context, RecorridoAccion.finalizar),
             );
           },
+
+          onVolver: () {
+            context.go('/home');
+          },
+
+          onCentrarUbicacion: _centrarMiUbicacion,
         );
       },
     );

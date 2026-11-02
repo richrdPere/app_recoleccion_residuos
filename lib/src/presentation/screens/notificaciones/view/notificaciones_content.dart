@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../cubit/notificaciones_state.dart';
 
+import 'package:app_recoleccion_residuos/src/presentation/shared/widgets/app_widgets/app_search_field.dart';
+
 class NotificacionesContent extends StatelessWidget {
   final NotificacionesState state;
 
@@ -59,28 +61,44 @@ class NotificacionesContent extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-            child: TextField(
-              controller: searchController,
-              onChanged: onSearch,
-              decoration: InputDecoration(
-                hintText: 'Buscar por título o mensaje',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                suffixIcon: IconButton(
-                  tooltip: 'Limpiar búsqueda',
-                  onPressed: () {
-                    searchController.clear();
-                    onSearch('');
-                  },
-                  icon: const Icon(Icons.close),
-                ),
+          if (state.userId != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+              child: AppSearchField(
+                userId: state.userId!,
+                historyScope: 'notificaciones.bandeja',
+                query: state.search,
+                hintText: 'Buscar notificaciones',
+                emptyTitle: 'Busca una notificación',
+                emptyDescription: 'Escribe parte del título o del mensaje.',
+                resultsSubtitle: 'Filtrar mis notificaciones',
+                allowEmptyQuery: true,
+                onSearch: onSearch,
               ),
             ),
-          ),
+
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          //   child: TextField(
+          //     controller: searchController,
+          //     onChanged: onSearch,
+          //     decoration: InputDecoration(
+          //       hintText: 'Buscar por título o mensaje',
+          //       prefixIcon: const Icon(Icons.search),
+          //       border: OutlineInputBorder(
+          //         borderRadius: BorderRadius.circular(16),
+          //       ),
+          //       suffixIcon: IconButton(
+          //         tooltip: 'Limpiar búsqueda',
+          //         onPressed: () {
+          //           searchController.clear();
+          //           onSearch('');
+          //         },
+          //         icon: const Icon(Icons.close),
+          //       ),
+          //     ),
+          //   ),
+          // ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

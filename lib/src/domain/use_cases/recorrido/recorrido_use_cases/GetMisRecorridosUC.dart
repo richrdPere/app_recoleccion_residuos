@@ -9,5 +9,10 @@ class GetMisRecorridosUC {
   Future<Resource<ApiResponse<MisRecorridosDataModel>>> run({
     required int page,
     required int limit,
-  }) => recorridoRepository.getMisRecorridos(page: page, limit: limit);
+    HistorialFiltros filtros = const HistorialFiltros(),
+  }) => recorridoRepository.getMisRecorridos(
+    page: page,
+    limit: limit,
+    filtros: filtros,
+  );
 }

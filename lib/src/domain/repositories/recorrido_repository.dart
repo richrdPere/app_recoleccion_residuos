@@ -33,6 +33,7 @@ abstract class RecorridoRepository {
   Future<Resource<ApiResponse<MisRecorridosDataModel>>> getMisRecorridos({
     required int page,
     required int limit,
+    HistorialFiltros filtros = const HistorialFiltros(),
   });
 
   /// 7. OBTENER RECORRIDO POR ID

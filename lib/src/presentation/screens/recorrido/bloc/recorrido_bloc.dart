@@ -14,6 +14,7 @@ import 'recorrido_state.dart';
 
 class RecorridoBloc extends Bloc<RecorridoEvent, RecorridoState> {
   final RecorridoUsecases recorridoUsecases;
+  ObtenerMisRecorridos? _ultimaConsultaHistorial;
 
   RecorridoBloc(this.recorridoUsecases) : super(RecorridoState.initial()) {
     // Un único registro permite ordenar consultas y acciones entre sí.
@@ -201,8 +202,22 @@ class RecorridoBloc extends Bloc<RecorridoEvent, RecorridoState> {
       return;
     }
 
+    // emit(
+    //   state.copyWith(
+    //     historialResponse: Loading<ApiResponse<MisRecorridosDataModel>>(),
+    //   ),
+    // );
+    final cambiaronFiltros =
+        _ultimaConsultaHistorial == null ||
+        _ultimaConsultaHistorial!.filtros != event.filtros;
+
+    _ultimaConsultaHistorial = event;
+
     emit(
       state.copyWith(
+        // No mostrar resultados de otros filtros como si
+        // pertenecieran a la búsqueda recién aplicada.
+        historial: cambiaronFiltros ? null : state.historial,
         historialResponse: Loading<ApiResponse<MisRecorridosDataModel>>(),
       ),
     );
@@ -211,6 +226,7 @@ class RecorridoBloc extends Bloc<RecorridoEvent, RecorridoState> {
       () => recorridoUsecases.getMisRecorridos.run(
         page: event.page,
         limit: event.limit,
+        filtros: event.filtros,
       ),
       mensajeError: 'No se pudo consultar el historial de recorridos.',
     );
@@ -293,6 +309,18 @@ class RecorridoBloc extends Bloc<RecorridoEvent, RecorridoState> {
     if (!emit.isDone && state.historial != null) {
       await _obtenerHistorial(
         ObtenerMisRecorridos(page: state.page, limit: state.limit),
+        emit,
+      );
+    }
+
+    if (!emit.isDone && state.historial != null) {
+      await _obtenerHistorial(
+        ObtenerMisRecorridos(
+          page: state.page,
+          limit: state.limit,
+          filtros:
+              _ultimaConsultaHistorial?.filtros ?? const HistorialFiltros(),
+        ),
         emit,
       );
     }

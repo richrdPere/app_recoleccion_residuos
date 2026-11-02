@@ -11,8 +11,13 @@ class ObtenerRecorridoActivo extends RecorridoEvent {
 class ObtenerMisRecorridos extends RecorridoEvent {
   final int page;
   final int limit;
+  final HistorialFiltros filtros;
 
-  const ObtenerMisRecorridos({this.page = 1, this.limit = 10});
+  const ObtenerMisRecorridos({
+    this.page = 1,
+    this.limit = 10,
+    this.filtros = const HistorialFiltros(),
+  });
 }
 
 class ObtenerRecorridoDetalle extends RecorridoEvent {

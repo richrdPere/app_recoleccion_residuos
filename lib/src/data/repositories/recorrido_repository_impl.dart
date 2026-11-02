@@ -117,13 +117,19 @@ class RecorridoRepositoryImpl implements RecorridoRepository {
   Future<Resource<ApiResponse<MisRecorridosDataModel>>> getMisRecorridos({
     required int page,
     required int limit,
+    HistorialFiltros filtros = const HistorialFiltros(),
   }) async {
     final token = await authRepository.getToken();
     if (token == null) {
       return ErrorData(message: 'No existe una sesión iniciada.');
     }
 
-    return await recorridoService.getMisRecorridos(token: token);
+    return await recorridoService.getMisRecorridos(
+      token: token,
+      page: page,
+      limit: limit,
+      filtros: filtros,
+    );
   }
 
   // *********************************************************

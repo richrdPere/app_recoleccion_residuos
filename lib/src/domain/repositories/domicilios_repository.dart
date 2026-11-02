@@ -25,7 +25,11 @@ abstract class DomiciliosRepository {
   Future<Resource<ApiResponse<GetDomicilioCronogramaDataModel>>>
   getDomicilioCronograma({required int idDomicilio});
 
-  /// 6. ELIMINAR DOMICILIO CIUDADANO
+  /// 6. OBTENER SERVICIO ACTIVO DEL DOMICILIO
+  Future<Resource<ApiResponse<GetDomicilioServicioActivoDataModel>>>
+  getDomicilioServicioActivo({required int idDomicilio});
+
+  /// 7. ELIMINAR DOMICILIO CIUDADANO
   Future<Resource<ApiResponse<DeleteCiudadanoDomicilioDataModel>>>
   deleteCiudadanoDomicilio({required int idDomicilio});
 }

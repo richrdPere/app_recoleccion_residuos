@@ -92,6 +92,7 @@ export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/update_ciuda
 export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/set_principal_ciudadano_domicilio_model.dart';
 export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/get_domicilio_cronograma_model.dart';
 export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/delete_ciudadano_domicilio_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/get_domicilio_servicio_activo_model.dart';
 
 // =======================================================
 // Preferencias

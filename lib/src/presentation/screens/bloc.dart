@@ -88,3 +88,8 @@ export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/blocs/tra
 export 'package:app_recoleccion_residuos/src/presentation/screens/incidencias/bloc/incidencias_bloc.dart';
 export 'package:app_recoleccion_residuos/src/presentation/screens/incidencias/bloc/incidencias_event.dart';
 export 'package:app_recoleccion_residuos/src/presentation/screens/incidencias/bloc/incidencias_state.dart';
+
+// Mapa - Ciudadano
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_mapa/bloc/ciudadano_mapa_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_mapa/bloc/ciudadano_mapa_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_mapa/bloc/ciudadano_mapa_state.dart';

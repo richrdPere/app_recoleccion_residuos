@@ -7,6 +7,7 @@ class DomiciliosUseCases {
   GetMisDomiciliosUC getMisDomicilios;
   SetPrincipalCiudadanoDomicilioUC setPrincipalCiudadanoDomicilio;
   UpdateCiudadanoDomicilioUC updateCiudadanoDomicilio;
+  GetDomicilioServicioActivoUC getDomicilioServicioActivo;
 
   DomiciliosUseCases({
     required this.createCiudadanoDomicilio,
@@ -15,5 +16,6 @@ class DomiciliosUseCases {
     required this.getMisDomicilios,
     required this.setPrincipalCiudadanoDomicilio,
     required this.updateCiudadanoDomicilio,
+    required this.getDomicilioServicioActivo,
   });
 }

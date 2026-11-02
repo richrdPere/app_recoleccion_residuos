@@ -1,7 +1,10 @@
-import 'package:app_recoleccion_residuos/src/presentation/screens/notificaciones/cubit/notificaciones_cubit.dart';
-import 'package:app_recoleccion_residuos/src/presentation/screens/notificaciones/cubit/notificaciones_state.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
+// import 'package:app_recoleccion_residuos/src/presentation/screens/notificaciones/cubit/notificaciones_cubit.dart';
+// import 'package:app_recoleccion_residuos/src/presentation/screens/notificaciones/cubit/notificaciones_state.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+
+
 
 class CiudadanoBottomNavigation extends StatelessWidget {
   final int currentIndex;
@@ -39,23 +42,23 @@ class CiudadanoBottomNavigation extends StatelessWidget {
             selectedIcon: Icon(Icons.map_rounded),
             label: 'Mapa',
           ),
-          NavigationDestination(
-            icon: BlocBuilder<NotificacionesCubit, NotificacionesState>(
-              builder: (_, state) => Badge(
-                isLabelVisible: state.unread > 0,
-                label: Text(state.unread > 99 ? '99+' : '${state.unread}'),
-                child: const Icon(Icons.notifications_outlined),
-              ),
-            ),
-            selectedIcon: BlocBuilder<NotificacionesCubit, NotificacionesState>(
-              builder: (_, state) => Badge(
-                isLabelVisible: state.unread > 0,
-                label: Text(state.unread > 99 ? '99+' : '${state.unread}'),
-                child: const Icon(Icons.notifications_rounded),
-              ),
-            ),
-            label: 'Alertas',
-          ),
+          // NavigationDestination(
+          //   icon: BlocBuilder<NotificacionesCubit, NotificacionesState>(
+          //     builder: (_, state) => Badge(
+          //       isLabelVisible: state.unread > 0,
+          //       label: Text(state.unread > 99 ? '99+' : '${state.unread}'),
+          //       child: const Icon(Icons.notifications_outlined),
+          //     ),
+          //   ),
+          //   selectedIcon: BlocBuilder<NotificacionesCubit, NotificacionesState>(
+          //     builder: (_, state) => Badge(
+          //       isLabelVisible: state.unread > 0,
+          //       label: Text(state.unread > 99 ? '99+' : '${state.unread}'),
+          //       child: const Icon(Icons.notifications_rounded),
+          //     ),
+          //   ),
+          //   label: 'Alertas',
+          // ),
           // NavigationDestination(
           //   icon: Icon(Icons.notifications_outlined),
           //   selectedIcon: Icon(Icons.notifications_rounded),

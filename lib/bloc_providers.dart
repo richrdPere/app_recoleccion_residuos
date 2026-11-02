@@ -146,4 +146,18 @@ List<BlocProvider> blocProviders = [
     lazy: false,
     create: (_) => NotificacionesCubit(locator<NotificacionesUseCases>()),
   ),
+
+  // *********************************************************
+  // 20. MAPA CIUDADANO
+  // *********************************************************
+  BlocProvider<CiudadanoMapaBloc>(
+    create: (_) {
+      final useCases = locator<DomiciliosUseCases>();
+
+      return CiudadanoMapaBloc(
+        getMisDomicilios: useCases.getMisDomicilios,
+        getDomicilioServicioActivo: useCases.getDomicilioServicioActivo,
+      );
+    },
+  ),
 ];

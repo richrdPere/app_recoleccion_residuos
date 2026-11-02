@@ -312,195 +312,218 @@ class MapaContent extends StatelessWidget {
         appBar: MapaAppBar(onVolver: onVolver),
         body: LayoutBuilder(
           builder: (context, constraints) {
-            // El body se extiende detrás del AppBar:
-            // reservar manualmente su espacio y el área del sistema.
             final inicioPanel = media.padding.top + kToolbarHeight + 8;
 
             final espacioDisponible =
-                (constraints.maxHeight - inicioPanel - media.padding.bottom)
+                (constraints.maxHeight -
+                        inicioPanel -
+                        media.padding.bottom -
+                        12)
                     .clamp(0.0, double.infinity)
                     .toDouble();
 
-            final alturaPanel =
-                espacioDisponible * (tecladoVisible ? 0.80 : 0.40);
+            final alturaMaximaBuscador =
+                espacioDisponible * (tecladoVisible ? 0.85 : 0.40);
 
-            final inicioBotones = inicioPanel + alturaPanel + 8;
-
-            final margenInferior = media.padding.bottom + 12;
-
-            final alturaResumen = (espacioDisponible * 0.34)
+            final alturaMaximaResumen = (espacioDisponible * 0.34)
                 .clamp(0.0, 190.0)
                 .toDouble();
 
-            final margenInferiorBotones = margenInferior + alturaResumen + 12;
-
-            final hayEspacioParaBotones =
-                constraints.maxHeight - inicioBotones - margenInferiorBotones >
-                0;
-
             return Stack(
               children: [
-                // ***************************************
-                // MAPA
-                // ***************************************
+                // El mapa permanece montado.
                 Positioned.fill(child: mapaBase),
 
-                // ***************************************
-                // GPS, BUSCADOR Y RESULTADOS
-                // ***************************************
-                Positioned(
+                Positioned.fill(
                   top: inicioPanel,
-                  left: 12,
-                  right: 12,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: alturaPanel),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const GeolocatorAccesoWidget(),
-
-                          Builder(
-                            builder: (context) {
-                              final usuarioId = userId;
-
-                              if (usuarioId == null ||
-                                  usuarioId.trim().isEmpty) {
-                                return const SizedBox.shrink();
-                              }
-
-                              return Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const SizedBox(height: 8),
-
-                                  MapaBuscador(
-                                    userId: usuarioId,
-                                    consulta: consultaBusqueda,
-                                    onBuscar: onBuscarDestinoTexto,
-                                  ),
-
-                                  if (mostrarResultados) ...[
-                                    const SizedBox(height: 10),
-
-                                    MapaResultadosBusqueda(
-                                      onSeleccionarDestino:
-                                          onSeleccionarDestino,
-                                      onReintentar: onBuscarDestino,
-                                    ),
-                                  ],
-                                ],
-                              );
-                            },
+                  bottom: media.padding.bottom + 12,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // ***************************************
+                      // GPS, BUSCADOR Y RESULTADOS
+                      // Ocupa únicamente su altura real,
+                      // hasta el máximo permitido.
+                      // ***************************************
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight: alturaMaximaBuscador,
                           ),
-                        ],
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const GeolocatorAccesoWidget(),
+
+                                Builder(
+                                  builder: (context) {
+                                    final usuarioId = userId;
+
+                                    if (usuarioId == null ||
+                                        usuarioId.trim().isEmpty) {
+                                      return const SizedBox.shrink();
+                                    }
+
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const SizedBox(height: 8),
+
+                                        MapaBuscador(
+                                          userId: usuarioId,
+                                          consulta: consultaBusqueda,
+                                          onBuscar: onBuscarDestinoTexto,
+                                        ),
+
+                                        if (mostrarResultados) ...[
+                                          const SizedBox(height: 10),
+
+                                          MapaResultadosBusqueda(
+                                            onSeleccionarDestino:
+                                                onSeleccionarDestino,
+                                            onReintentar: onBuscarDestino,
+                                          ),
+                                        ],
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+
+                      // ***************************************
+                      // ESPACIO CENTRAL Y BOTONES LATERALES
+                      // ***************************************
+                      Expanded(
+                        child: tecladoVisible
+                            ? const SizedBox.shrink()
+                            : Align(
+                                alignment: Alignment.centerRight,
+                                child: SizedBox(
+                                  width: 64,
+                                  child:
+                                      BlocBuilder<
+                                        RecorridoBloc,
+                                        RecorridoState
+                                      >(
+                                        builder: (context, state) {
+                                          final recorrido =
+                                              state.recorridoActivo;
+
+                                          final estado = recorrido
+                                              ?.estadoRecorrido
+                                              .trim()
+                                              .toUpperCase();
+
+                                          final enCurso = estado == 'EN_CURSO';
+
+                                          final pausado = estado == 'PAUSADO';
+
+                                          final consultaFallida =
+                                              state.activoResponse
+                                                  is ErrorData<
+                                                    ApiResponse<
+                                                      RecorridoDataModel?
+                                                    >
+                                                  >;
+
+                                          final activoConsultado =
+                                              state.activoResponse
+                                                  is Success<
+                                                    ApiResponse<
+                                                      RecorridoDataModel?
+                                                    >
+                                                  > ||
+                                              recorrido != null;
+
+                                          final ocupado =
+                                              preparandoAccionRecorrido ||
+                                              state.isProcessingAccion ||
+                                              state.isLoadingActivo;
+
+                                          final puedeOperar =
+                                              !ocupado &&
+                                              !consultaFallida &&
+                                              activoConsultado;
+
+                                          final tieneProgramacion =
+                                              idProgramacion != null &&
+                                              idProgramacion! > 0;
+
+                                          final mostrarIniciar =
+                                              recorrido == null &&
+                                              tieneProgramacion &&
+                                              activoConsultado &&
+                                              !consultaFallida &&
+                                              !state.isLoadingActivo;
+
+                                          return MapaAccionesLaterales(
+                                            onCentrarUbicacion:
+                                                onCentrarUbicacion ??
+                                                onSolicitarUbicacion,
+
+                                            onAjustarRuta: onAjustarRuta,
+
+                                            centrandoUbicacion:
+                                                ubicacionPendiente,
+
+                                            puedeIniciar: mostrarIniciar,
+                                            puedePausar: enCurso,
+                                            puedeReanudar: pausado,
+
+                                            // Finalizar está disponible
+                                            // en curso o estando pausado.
+                                            puedeFinalizar: enCurso || pausado,
+
+                                            procesandoRecorrido: ocupado,
+
+                                            onIniciarRecorrido: puedeOperar
+                                                ? onIniciarRecorrido
+                                                : null,
+
+                                            onPausarRecorrido: puedeOperar
+                                                ? onPausarRecorrido
+                                                : null,
+
+                                            onReanudarRecorrido: puedeOperar
+                                                ? onReanudarRecorrido
+                                                : null,
+
+                                            onFinalizarRecorrido: puedeOperar
+                                                ? onFinalizarRecorrido
+                                                : null,
+
+                                            onAbrirOperaciones: () {
+                                              _abrirOperaciones(context);
+                                            },
+                                          );
+                                        },
+                                      ),
+                                ),
+                              ),
+                      ),
+
+                      // ***************************************
+                      // RESUMEN INFERIOR
+                      // ***************************************
+                      if (!tecladoVisible && alturaMaximaResumen > 0)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxHeight: alturaMaximaResumen,
+                            ),
+                            child: _construirResumen(context),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-
-                // ***************************************
-                // BOTONES LATERALES
-                // ***************************************
-                if (!tecladoVisible && hayEspacioParaBotones)
-                  Positioned(
-                    top: inicioBotones,
-                    bottom: margenInferiorBotones,
-                    right: 6,
-                    width: 64,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: BlocBuilder<RecorridoBloc, RecorridoState>(
-                        builder: (context, state) {
-                          final recorrido = state.recorridoActivo;
-
-                          final estado = recorrido?.estadoRecorrido
-                              .trim()
-                              .toUpperCase();
-
-                          final enCurso = estado == 'EN_CURSO';
-
-                          final pausado = estado == 'PAUSADO';
-
-                          final consultaFallida =
-                              state.activoResponse
-                                  is ErrorData<
-                                    ApiResponse<RecorridoDataModel?>
-                                  >;
-
-                          final activoConsultado =
-                              state.activoResponse
-                                  is Success<
-                                    ApiResponse<RecorridoDataModel?>
-                                  > ||
-                              recorrido != null;
-
-                          final ocupado =
-                              preparandoAccionRecorrido ||
-                              state.isProcessingAccion ||
-                              state.isLoadingActivo;
-
-                          final puedeOperar =
-                              !ocupado && !consultaFallida && activoConsultado;
-
-                          final tieneProgramacion =
-                              idProgramacion != null && idProgramacion! > 0;
-
-                          final mostrarIniciar =
-                              recorrido == null &&
-                              tieneProgramacion &&
-                              activoConsultado &&
-                              !consultaFallida &&
-                              !state.isLoadingActivo;
-
-                          return MapaAccionesLaterales(
-                            onCentrarUbicacion:
-                                onCentrarUbicacion ?? onSolicitarUbicacion,
-
-                            onAjustarRuta: onAjustarRuta,
-
-                            centrandoUbicacion: ubicacionPendiente,
-
-                            puedeIniciar: mostrarIniciar,
-                            puedePausar: enCurso,
-                            puedeReanudar: pausado,
-
-                            procesandoRecorrido: ocupado,
-
-                            onIniciarRecorrido: puedeOperar
-                                ? onIniciarRecorrido
-                                : null,
-
-                            onPausarRecorrido: puedeOperar
-                                ? onPausarRecorrido
-                                : null,
-
-                            onReanudarRecorrido: puedeOperar
-                                ? onReanudarRecorrido
-                                : null,
-
-                            onAbrirOperaciones: () {
-                              _abrirOperaciones(context);
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-
-                // ***********************************************
-                // RESUMEN INFERIOR DEL SERVICIO
-                // ***********************************************
-                if (!tecladoVisible && alturaResumen > 0)
-                  Positioned(
-                    left: 12,
-                    right: 12,
-                    bottom: margenInferior,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxHeight: alturaResumen),
-                      child: _construirResumen(context),
-                    ),
-                  ),
               ],
             );
           },

@@ -33,13 +33,37 @@ class _CiudadanoInicioPageState extends State<CiudadanoInicioPage> {
   // 2. ACTUALIZAR INICIO
   // *********************************************************
 
-  void _loadInicio() {
+  Future<void> _loadInicio() async {
     final bloc = context.read<CiudadanoInicioBloc>();
 
-    if (bloc.state.isLoading) return;
+    if (bloc.isClosed) return;
 
-    bloc.add(const CiudadanoInicioRequested());
+    // Espera domicilios y, cuando corresponde, su cronograma.
+    final completion = bloc.stream.firstWhere(
+      (state) =>
+          state.isFailure ||
+          (state.status == CiudadanoInicioStatus.ready &&
+              !state.isCronogramaLoading),
+    );
+
+    // Si hay una consulta en marcha, espera su resultado.
+    if (!bloc.state.isLoading && !bloc.state.isCronogramaLoading) {
+      bloc.add(const CiudadanoInicioRequested());
+    }
+
+    try {
+      await completion;
+    } on StateError {
+      // El BLoC se cerró al salir de la sesión o aplicación.
+    }
   }
+  // void _loadInicio() {
+  //   final bloc = context.read<CiudadanoInicioBloc>();
+
+  //   if (bloc.state.isLoading) return;
+
+  //   bloc.add(const CiudadanoInicioRequested());
+  // }
 
   // *********************************************************
   // 3. SELECCIONAR DOMICILIO
@@ -85,6 +109,13 @@ class _CiudadanoInicioPageState extends State<CiudadanoInicioPage> {
           onOpenMapa: () {
             context.go('/ciudadano/mapa');
           },
+          campana: IconButton(
+            tooltip: 'Mis notificaciones',
+            icon: const Icon(Icons.notifications_none_rounded),
+            onPressed: () {
+              context.push('/ciudadano/alertas');
+            },
+          ),
         );
       },
     );

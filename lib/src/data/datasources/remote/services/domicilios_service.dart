@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+
 import 'package:http/http.dart' as http;
 
 // Environment
@@ -460,7 +461,95 @@ class DomiciliosService {
   }
 
   // *********************************************************
-  // 6. ELIMINAR DOMICILIO CIUDADANO
+  // 6. OBTENER SERVICIO ACTIVO DEL DOMICILIO
+  // *********************************************************
+  Future<Resource<ApiResponse<GetDomicilioServicioActivoDataModel>>>
+  getDomicilioServicioActivo({
+    required String token,
+    required int idDomicilio,
+  }) async {
+    if (token.trim().isEmpty) {
+      return ErrorData<ApiResponse<GetDomicilioServicioActivoDataModel>>(
+        message: 'Debes iniciar sesión para consultar el servicio.',
+        statusCode: 401,
+      );
+    }
+
+    if (idDomicilio <= 0) {
+      return ErrorData<ApiResponse<GetDomicilioServicioActivoDataModel>>(
+        message: 'El identificador del domicilio no es válido.',
+        statusCode: 400,
+      );
+    }
+
+    try {
+      // 1. CONSTRUIR URL
+      // La misma base /ciudadanos/domicilios del cronograma.
+      final baseUri = Uri.parse(API_GET_DOMICILIO_CRONOGRAMA);
+
+      final uri = baseUri.replace(
+        path:
+            '${baseUri.path.replaceFirst(RegExp(r'/+$'), '')}'
+            '/$idDomicilio/servicio-activo',
+      );
+
+      // 2. PETICIÓN HTTP
+      final response = await http
+          .get(uri, headers: HttpServiceHelper.getHeaders(token: token))
+          .timeout(const Duration(seconds: 30));
+
+      final body = HttpServiceHelper.decodeResponse(response);
+
+      // 3. RESPUESTA EXITOSA
+      if (HttpServiceHelper.isSuccess(response.statusCode) &&
+          body['success'] == true) {
+        final apiResponse =
+            ApiResponse<GetDomicilioServicioActivoDataModel>.fromJson(
+              body,
+              (rawData) => GetDomicilioServicioActivoDataModel.fromJson(
+                Map<String, dynamic>.from(rawData as Map),
+              ),
+            );
+
+        final data = apiResponse.data;
+
+        if (data == null) {
+          return ErrorData<ApiResponse<GetDomicilioServicioActivoDataModel>>(
+            message: 'El servidor no devolvió los datos del servicio.',
+            statusCode: response.statusCode,
+          );
+        }
+
+        if (data.domicilio.idDomicilio != idDomicilio) {
+          return ErrorData<ApiResponse<GetDomicilioServicioActivoDataModel>>(
+            message:
+                'Los datos recibidos no corresponden '
+                'al domicilio solicitado.',
+            statusCode: response.statusCode,
+          );
+        }
+
+        return Success<ApiResponse<GetDomicilioServicioActivoDataModel>>(
+          apiResponse,
+        );
+      }
+
+      // 4. RESPUESTA DE ERROR
+      return HttpServiceHelper.buildError<
+        ApiResponse<GetDomicilioServicioActivoDataModel>
+      >(body, response.statusCode);
+    } catch (error) {
+      return ErrorData<ApiResponse<GetDomicilioServicioActivoDataModel>>(
+        message:
+            'No se pudo consultar el servicio de recolección. '
+            'Inténtalo nuevamente.',
+        error: error.toString(),
+      );
+    }
+  }
+
+  // *********************************************************
+  // 7. ELIMINAR DOMICILIO CIUDADANO
   // *********************************************************
   Future<Resource<ApiResponse<DeleteCiudadanoDomicilioDataModel>>>
   deleteCiudadanoDomicilio({

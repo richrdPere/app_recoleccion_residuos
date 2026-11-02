@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -138,11 +139,7 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/ciudadano/mapa',
           name: 'ciudadano-mapa',
-          // builder: (context, state) =>
-          //     const Center(child: Text('Mapa ciudadanas')),
-          builder: (context, state) {
-            return const MapaPage();
-          },
+          builder: (_, _) => const CiudadanoMapaPage(),
         ),
         GoRoute(
           path: '/ciudadano/alertas',

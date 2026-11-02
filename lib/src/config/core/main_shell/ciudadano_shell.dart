@@ -12,7 +12,7 @@ class CiudadanoShell extends StatelessWidget {
   static const List<String> _routes = [
     '/ciudadano/inicio',
     '/ciudadano/mapa',
-    '/ciudadano/alertas',
+    //'/ciudadano/alertas',
     '/ciudadano/perfil',
   ];
 

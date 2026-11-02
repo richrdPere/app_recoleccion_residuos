@@ -88,6 +88,7 @@ export 'package:app_recoleccion_residuos/src/domain/use_cases/domicilios/domicil
 export 'package:app_recoleccion_residuos/src/domain/use_cases/domicilios/domicilios_use_cases/GetMisDomiciliosUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/domicilios/domicilios_use_cases/SetPrincipalCiudadanoDomicilioUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/domicilios/domicilios_use_cases/UpdateCiudadanoDomicilioUC.dart';
+export 'package:app_recoleccion_residuos/src/domain/use_cases/domicilios/domicilios_use_cases/GetDomicilioServicioActivoUC.dart';
 export 'package:app_recoleccion_residuos/src/domain/use_cases/domicilios/DomiciliosUseCases.dart';
 
 // =======================================================================

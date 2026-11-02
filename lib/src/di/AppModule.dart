@@ -347,6 +347,9 @@ abstract class Appmodule {
       domiciliosRepository,
     ),
     updateCiudadanoDomicilio: UpdateCiudadanoDomicilioUC(domiciliosRepository),
+    getDomicilioServicioActivo: GetDomicilioServicioActivoUC(
+      domiciliosRepository,
+    ),
   );
 
   // - Pref Notification

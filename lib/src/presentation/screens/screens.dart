@@ -30,3 +30,6 @@ export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/view/mapa
 // NOTIFICACIONES
 export 'package:app_recoleccion_residuos/src/presentation/screens/notificaciones/view/notificaciones_page.dart';
 export 'package:app_recoleccion_residuos/src/presentation/screens/notificaciones/view/notificacion_detalle_page.dart';
+
+// MAPA CIUDADANO
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_mapa/view/ciudadano_mapa_page.dart';

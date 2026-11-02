@@ -108,7 +108,24 @@ class DomiciliosRepositoryImpl implements DomiciliosRepository {
   }
 
   // *********************************************************
-  // 6. ELIMINAR DOMICILIO CIUDADANO
+  // 6. OBTENER SERVICIO ACTIVO DEL DOMICILIO
+  // *********************************************************
+  @override
+  Future<Resource<ApiResponse<GetDomicilioServicioActivoDataModel>>>
+  getDomicilioServicioActivo({required int idDomicilio}) async {
+    final token = await authRepository.getToken();
+    if (token == null) {
+      return ErrorData(message: 'No existe una sesión iniciada.');
+    }
+
+    return await domiciliosService.getDomicilioServicioActivo(
+      token: token,
+      idDomicilio: idDomicilio,
+    );
+  }
+
+  // *********************************************************
+  // 7. ELIMINAR DOMICILIO CIUDADANO
   // *********************************************************
   @override
   Future<Resource<ApiResponse<DeleteCiudadanoDomicilioDataModel>>>

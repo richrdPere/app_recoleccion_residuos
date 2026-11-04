@@ -93,17 +93,31 @@ class DomiciliosRepositoryImpl implements DomiciliosRepository {
   // *********************************************************
   // 5. OBTENER CRONOGRAMA DEL DOMICILIO
   // *********************************************************
+  // *********************************************************
+  // 5. OBTENER CRONOGRAMA DEL DOMICILIO
+  // *********************************************************
+
   @override
   Future<Resource<ApiResponse<GetDomicilioCronogramaDataModel>>>
-  getDomicilioCronograma({required int idDomicilio}) async {
+  getDomicilioCronograma({
+    required int idDomicilio,
+    String? fechaDesde,
+    String? fechaHasta,
+  }) async {
     final token = await authRepository.getToken();
-    if (token == null) {
-      return ErrorData(message: 'No existe una sesión iniciada.');
+
+    if (token == null || token.trim().isEmpty) {
+      return ErrorData<ApiResponse<GetDomicilioCronogramaDataModel>>(
+        message: 'No existe una sesión iniciada.',
+        statusCode: 401,
+      );
     }
 
     return domiciliosService.getDomicilioCronograma(
       token: token,
       idDomicilio: idDomicilio,
+      fechaDesde: fechaDesde,
+      fechaHasta: fechaHasta,
     );
   }
 
@@ -138,6 +152,49 @@ class DomiciliosRepositoryImpl implements DomiciliosRepository {
     return domiciliosService.deleteCiudadanoDomicilio(
       token: token,
       idDomicilio: idDomicilio,
+    );
+  }
+
+  // *********************************************************
+  // 8. RESOLVER COBERTURA DEL DOMICILIO
+  // *********************************************************
+  @override
+  Future<Resource<ApiResponse<ResolverCoberturaDataModel>>> resolverCobertura({
+    required ResolverCoberturaRequest request,
+  }) async {
+    final token = await authRepository.getToken();
+    if (token == null) {
+      return ErrorData(message: 'No existe una sesión iniciada.');
+    }
+
+    return await domiciliosService.resolverCobertura(
+      token: token,
+      request: request,
+    );
+  }
+
+  // *********************************************************
+  // 9. CAMBIAR ESTADO DEL DOMICILIO
+  // *********************************************************
+  @override
+  Future<Resource<ApiResponse<UpdateCiudadanoDomicilioDataModel>>>
+  changeEstadoCiudadanoDomicilio({
+    required int idDomicilio,
+    required bool activo,
+  }) async {
+    final token = await authRepository.getToken();
+
+    if (token == null || token.trim().isEmpty) {
+      return ErrorData<ApiResponse<UpdateCiudadanoDomicilioDataModel>>(
+        message: 'No existe una sesión iniciada.',
+        statusCode: 401,
+      );
+    }
+
+    return await domiciliosService.changeEstadoCiudadanoDomicilio(
+      token: token,
+      idDomicilio: idDomicilio,
+      activo: activo,
     );
   }
 }

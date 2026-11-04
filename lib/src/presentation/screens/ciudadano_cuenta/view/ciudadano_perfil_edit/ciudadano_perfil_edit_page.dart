@@ -20,6 +20,7 @@ class CiudadanoPerfilEditPage extends StatefulWidget {
 
 class _CiudadanoPerfilEditPageState extends State<CiudadanoPerfilEditPage> {
   bool _saveRequested = false;
+  bool _confirmandoConsentimiento = false;
 
   @override
   void initState() {
@@ -127,11 +128,72 @@ class _CiudadanoPerfilEditPageState extends State<CiudadanoPerfilEditPage> {
                     errorMessage: state.errorMessage,
                     onRetry: _consultar,
                     onCancel: () => _volver(),
-                    onSave: (request) {
+                    onSave: (request) async {
+                      if (_confirmandoConsentimiento || _saveRequested) {
+                        return;
+                      }
+
                       final current = context.read<CiudadanoCuentaBloc>().state;
 
                       if (current.status != CiudadanoCuentaStatus.ready ||
                           current.perfil?.idCiudadano != widget.idCiudadano) {
+                        return;
+                      }
+
+                      if (current.perfil!.aceptaTratamientoDatos &&
+                          !request.aceptaTratamientoDatos) {
+                        _confirmandoConsentimiento = true;
+
+                        bool confirmado = false;
+
+                        try {
+                          confirmado =
+                              await showDialog<bool>(
+                                context: context,
+                                builder: (dialogContext) {
+                                  return AlertDialog(
+                                    title: const Text('Retirar consentimiento'),
+                                    content: const Text(
+                                      'Se desactivará tu perfil ciudadano '
+                                      'y se deshabilitarán los avisos. '
+                                      'Tus domicilios no se eliminarán. '
+                                      '¿Deseas continuar?',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(
+                                            dialogContext,
+                                          ).pop(false);
+                                        },
+                                        child: const Text('Cancelar'),
+                                      ),
+                                      FilledButton(
+                                        onPressed: () {
+                                          Navigator.of(dialogContext).pop(true);
+                                        },
+                                        child: const Text(
+                                          'Retirar consentimiento',
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ) ??
+                              false;
+                        } finally {
+                          _confirmandoConsentimiento = false;
+                        }
+
+                        if (!mounted || !confirmado) return;
+                      }
+
+                      if (!mounted) return;
+
+                      final latest = context.read<CiudadanoCuentaBloc>().state;
+
+                      if (latest.status != CiudadanoCuentaStatus.ready ||
+                          latest.perfil?.idCiudadano != widget.idCiudadano) {
                         return;
                       }
 

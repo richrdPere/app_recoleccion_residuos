@@ -1,3 +1,5 @@
+
+
 import 'package:app_recoleccion_residuos/src/domain/uses_cases.dart';
 
 class DomiciliosUseCases {
@@ -8,6 +10,8 @@ class DomiciliosUseCases {
   SetPrincipalCiudadanoDomicilioUC setPrincipalCiudadanoDomicilio;
   UpdateCiudadanoDomicilioUC updateCiudadanoDomicilio;
   GetDomicilioServicioActivoUC getDomicilioServicioActivo;
+  ResolverCoberturaUC resolverCobertura;
+  ChangeEstadoCiudadanoDomicilioUC changeEstadoCiudadanoDomicilio;
 
   DomiciliosUseCases({
     required this.createCiudadanoDomicilio,
@@ -17,5 +21,7 @@ class DomiciliosUseCases {
     required this.setPrincipalCiudadanoDomicilio,
     required this.updateCiudadanoDomicilio,
     required this.getDomicilioServicioActivo,
+    required this.resolverCobertura,
+    required this.changeEstadoCiudadanoDomicilio,
   });
 }

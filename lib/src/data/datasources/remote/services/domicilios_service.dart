@@ -3,7 +3,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-
 import 'package:http/http.dart' as http;
 
 // Environment
@@ -28,6 +27,8 @@ class DomiciliosService {
   String get API_SET_PRINCIPAL_CIUDADANO_DOMICILIO => '$API_BASE/domicilios';
   String get API_GET_DOMICILIO_CRONOGRAMA => '$API_BASE/domicilios';
   String get API_DELETE_CIUDADANO_DOMICILIO => '$API_BASE/domicilios';
+  String get API_RESOLVER_COBERTURA =>
+      '$API_BASE/domicilios/resolver-cobertura';
 
   // *********************************************************
   // 1. REGISTRAR DOMICILIO CIUDADANO
@@ -391,6 +392,8 @@ class DomiciliosService {
   getDomicilioCronograma({
     required String token,
     required int idDomicilio,
+    String? fechaDesde,
+    String? fechaHasta,
   }) async {
     if (token.trim().isEmpty) {
       return ErrorData<ApiResponse<GetDomicilioCronogramaDataModel>>(
@@ -406,14 +409,63 @@ class DomiciliosService {
       );
     }
 
+    // VALIDAR FECHAS SIN CONVERTIRLAS A LA ZONA HORARIA DEL TELÉFONO.
+    bool fechaValida(String value) {
+      if (!RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(value)) {
+        return false;
+      }
+
+      final date = DateTime.tryParse('${value}T00:00:00Z');
+
+      if (date == null) return false;
+
+      // DateTime puede normalizar fechas como 2026-02-30.
+      // Comparar los componentes permite rechazarlas.
+      final year = date.year.toString().padLeft(4, '0');
+      final month = date.month.toString().padLeft(2, '0');
+      final day = date.day.toString().padLeft(2, '0');
+
+      return '$year-$month-$day' == value;
+    }
+
+    if ((fechaDesde != null && !fechaValida(fechaDesde)) ||
+        (fechaHasta != null && !fechaValida(fechaHasta))) {
+      return ErrorData<ApiResponse<GetDomicilioCronogramaDataModel>>(
+        message: 'Las fechas deben ser válidas y tener formato YYYY-MM-DD.',
+        statusCode: 400,
+      );
+    }
+
+    if (fechaDesde != null && fechaHasta != null) {
+      final desde = DateTime.parse('${fechaDesde}T00:00:00Z');
+      final hasta = DateTime.parse('${fechaHasta}T00:00:00Z');
+
+      final diferencia = hasta.difference(desde).inDays;
+
+      // Mismo límite inclusivo que el backend: entre 1 y 93 días.
+      if (diferencia < 0 || diferencia > 92) {
+        return ErrorData<ApiResponse<GetDomicilioCronogramaDataModel>>(
+          message: 'El periodo debe contener entre 1 y 93 días.',
+          statusCode: 400,
+        );
+      }
+    }
+
     try {
-      // 1. CONSTRUIR URL
+      // 1. CONSTRUIR URL Y QUERY PARAMS
       final baseUri = Uri.parse(API_GET_DOMICILIO_CRONOGRAMA);
+
+      final queryParameters = <String, String>{
+        ...baseUri.queryParameters,
+        if (fechaDesde != null) 'fecha_desde': fechaDesde,
+        if (fechaHasta != null) 'fecha_hasta': fechaHasta,
+      };
 
       final uri = baseUri.replace(
         path:
             '${baseUri.path.replaceFirst(RegExp(r'/+$'), '')}'
             '/$idDomicilio/cronograma',
+        queryParameters: queryParameters.isEmpty ? null : queryParameters,
       );
 
       // 2. PETICIÓN HTTP
@@ -426,6 +478,13 @@ class DomiciliosService {
       // 3. RESPUESTA EXITOSA
       if (HttpServiceHelper.isSuccess(response.statusCode) &&
           body['success'] == true) {
+        if (body['data'] is! Map) {
+          return ErrorData<ApiResponse<GetDomicilioCronogramaDataModel>>(
+            message: 'El servidor no devolvió un cronograma válido.',
+            statusCode: response.statusCode,
+          );
+        }
+
         final apiResponse =
             ApiResponse<GetDomicilioCronogramaDataModel>.fromJson(
               body,
@@ -450,11 +509,23 @@ class DomiciliosService {
       return HttpServiceHelper.buildError<
         ApiResponse<GetDomicilioCronogramaDataModel>
       >(body, response.statusCode);
+    } on TimeoutException catch (error) {
+      return ErrorData<ApiResponse<GetDomicilioCronogramaDataModel>>(
+        message:
+            'La consulta del cronograma tardó demasiado. '
+            'Intenta nuevamente.',
+        error: error.toString(),
+      );
+    } on FormatException catch (error) {
+      return ErrorData<ApiResponse<GetDomicilioCronogramaDataModel>>(
+        message: 'El servidor devolvió un cronograma con formato inválido.',
+        error: error.toString(),
+      );
     } catch (error) {
       return ErrorData<ApiResponse<GetDomicilioCronogramaDataModel>>(
         message:
             'No se pudo consultar el cronograma de recolección. '
-            'Inténtalo nuevamente.',
+            'Intenta nuevamente.',
         error: error.toString(),
       );
     }
@@ -625,6 +696,183 @@ class DomiciliosService {
         message:
             'No se pudo confirmar la eliminación del domicilio. '
             'Consulta tus domicilios antes de repetir la operación.',
+        error: error.toString(),
+      );
+    }
+  }
+
+  // *********************************************************
+  // 8. RESOLVER COBERTURA DEL DOMICILIO
+  // *********************************************************
+  Future<Resource<ApiResponse<ResolverCoberturaDataModel>>> resolverCobertura({
+    required String token,
+    required ResolverCoberturaRequest request,
+  }) async {
+    // VALIDAR SESIÓN
+    if (token.trim().isEmpty) {
+      return ErrorData<ApiResponse<ResolverCoberturaDataModel>>(
+        message: 'Debes iniciar sesión para consultar la cobertura.',
+        statusCode: 401,
+      );
+    }
+
+    // VALIDAR COORDENADAS
+    if (!request.latitud.isFinite ||
+        !request.longitud.isFinite ||
+        request.latitud < -90 ||
+        request.latitud > 90 ||
+        request.longitud < -180 ||
+        request.longitud > 180) {
+      return ErrorData<ApiResponse<ResolverCoberturaDataModel>>(
+        message: 'Selecciona una ubicación válida para el domicilio.',
+        statusCode: 400,
+      );
+    }
+
+    try {
+      // 1. CONSTRUIR URL
+      final uri = Uri.parse(API_RESOLVER_COBERTURA);
+
+      // 2. PETICIÓN HTTP
+      final response = await http
+          .post(
+            uri,
+            headers: HttpServiceHelper.getHeaders(token: token),
+            body: jsonEncode(request.toJson()),
+          )
+          .timeout(const Duration(seconds: 30));
+
+      final body = HttpServiceHelper.decodeResponse(response);
+
+      // 3. RESPUESTA EXITOSA
+      if (HttpServiceHelper.isSuccess(response.statusCode) &&
+          body['success'] == true) {
+        if (body['data'] is! Map) {
+          return ErrorData<ApiResponse<ResolverCoberturaDataModel>>(
+            message: 'El servidor no devolvió datos válidos de cobertura.',
+            statusCode: response.statusCode,
+          );
+        }
+
+        final apiResponse = ApiResponse<ResolverCoberturaDataModel>.fromJson(
+          body,
+          (rawData) => ResolverCoberturaDataModel.fromJson(
+            Map<String, dynamic>.from(rawData as Map),
+          ),
+        );
+
+        if (apiResponse.data == null) {
+          return ErrorData<ApiResponse<ResolverCoberturaDataModel>>(
+            message: 'El servidor no devolvió el resultado de cobertura.',
+            statusCode: response.statusCode,
+          );
+        }
+
+        return Success<ApiResponse<ResolverCoberturaDataModel>>(apiResponse);
+      }
+
+      // 4. RESPUESTA DE ERROR
+      return HttpServiceHelper.buildError<
+        ApiResponse<ResolverCoberturaDataModel>
+      >(body, response.statusCode);
+    } on TimeoutException catch (error) {
+      return ErrorData<ApiResponse<ResolverCoberturaDataModel>>(
+        message:
+            'La consulta de cobertura tardó demasiado. '
+            'Intenta nuevamente.',
+        error: error.toString(),
+      );
+    } on FormatException catch (error) {
+      return ErrorData<ApiResponse<ResolverCoberturaDataModel>>(
+        message: 'El servidor devolvió una respuesta de cobertura inválida.',
+        error: error.toString(),
+      );
+    } catch (error) {
+      return ErrorData<ApiResponse<ResolverCoberturaDataModel>>(
+        message:
+            'No se pudo consultar la cobertura. '
+            'Verifica tu conexión e intenta nuevamente.',
+        error: error.toString(),
+      );
+    }
+  }
+
+  // *********************************************************
+  // 9. CAMBIAR ESTADO DEL DOMICILIO
+  // *********************************************************
+  Future<Resource<ApiResponse<UpdateCiudadanoDomicilioDataModel>>>
+  changeEstadoCiudadanoDomicilio({
+    required String token,
+    required int idDomicilio,
+    required bool activo,
+  }) async {
+    if (token.trim().isEmpty) {
+      return ErrorData<ApiResponse<UpdateCiudadanoDomicilioDataModel>>(
+        message: 'Debes iniciar sesión para cambiar el estado del domicilio.',
+        statusCode: 401,
+      );
+    }
+
+    if (idDomicilio <= 0) {
+      return ErrorData<ApiResponse<UpdateCiudadanoDomicilioDataModel>>(
+        message: 'El identificador del domicilio no es válido.',
+        statusCode: 400,
+      );
+    }
+
+    try {
+      final baseUri = Uri.parse(API_UPDATE_CIUDADANO_DOMICILIO);
+
+      final uri = baseUri.replace(
+        path:
+            '${baseUri.path.replaceFirst(RegExp(r'/+$'), '')}'
+            '/$idDomicilio',
+      );
+
+      final response = await http
+          .put(
+            uri,
+            headers: HttpServiceHelper.getHeaders(token: token),
+            body: jsonEncode({
+              'estado_domicilio': activo ? 'ACTIVO' : 'INACTIVO',
+            }),
+          )
+          .timeout(const Duration(seconds: 30));
+
+      final body = HttpServiceHelper.decodeResponse(response);
+
+      if (HttpServiceHelper.isSuccess(response.statusCode) &&
+          body['success'] == true) {
+        final apiResponse =
+            ApiResponse<UpdateCiudadanoDomicilioDataModel>.fromJson(
+              body,
+              (rawData) => UpdateCiudadanoDomicilioDataModel.fromJson(
+                Map<String, dynamic>.from(rawData as Map),
+              ),
+            );
+
+        if (apiResponse.data == null) {
+          return ErrorData<ApiResponse<UpdateCiudadanoDomicilioDataModel>>(
+            message:
+                'El servidor no devolvió el domicilio actualizado. '
+                'Consulta el listado para verificar su estado.',
+            statusCode: response.statusCode,
+          );
+        }
+
+        return Success<ApiResponse<UpdateCiudadanoDomicilioDataModel>>(
+          apiResponse,
+        );
+      }
+
+      return HttpServiceHelper.buildError<
+        ApiResponse<UpdateCiudadanoDomicilioDataModel>
+      >(body, response.statusCode);
+    } catch (error) {
+      return ErrorData<ApiResponse<UpdateCiudadanoDomicilioDataModel>>(
+        message:
+            'No se pudo confirmar el cambio de estado. '
+            'Consulta el listado antes de repetir la operación.',
         error: error.toString(),
       );
     }

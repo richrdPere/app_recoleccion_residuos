@@ -175,6 +175,36 @@ final appRouter = GoRouter(
               path: 'domicilios',
               name: 'ciudadano-domicilios',
               builder: (context, state) => const CiudadanoDomiciliosPage(),
+              routes: [
+                GoRoute(
+                  path: 'crear',
+                  name: 'ciudadano-domicilio-crear',
+                  builder: (context, state) =>
+                      const CiudadanoDomicilioFormPage(),
+                ),
+                GoRoute(
+                  path: 'editar/:idDomicilio',
+                  name: 'ciudadano-domicilio-editar',
+                  builder: (context, state) {
+                    final id = int.tryParse(
+                      state.pathParameters['idDomicilio'] ?? '',
+                    );
+
+                    if (id == null || id <= 0) {
+                      return Scaffold(
+                        appBar: AppBar(title: const Text('Editar domicilio')),
+                        body: const Center(
+                          child: Text(
+                            'El identificador del domicilio no es válido.',
+                          ),
+                        ),
+                      );
+                    }
+
+                    return CiudadanoDomicilioFormPage(idDomicilio: id);
+                  },
+                ),
+              ],
             ),
           ],
         ),

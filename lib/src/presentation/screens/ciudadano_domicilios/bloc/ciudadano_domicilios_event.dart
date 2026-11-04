@@ -65,3 +65,36 @@ class CiudadanoDomicilioDeleteSubmitted extends CiudadanoDomiciliosEvent {
 class CiudadanoDomiciliosReset extends CiudadanoDomiciliosEvent {
   const CiudadanoDomiciliosReset();
 }
+
+// *********************************************************
+// RESOLVER COBERTURA
+// *********************************************************
+
+class CiudadanoDomicilioCoberturaRequested extends CiudadanoDomiciliosEvent {
+  final ResolverCoberturaRequest request;
+
+  const CiudadanoDomicilioCoberturaRequested({required this.request});
+}
+
+// *********************************************************
+// LIMPIAR COBERTURA
+// Usar al cambiar la ubicación o cerrar/abrir el formulario.
+// *********************************************************
+
+class CiudadanoDomicilioCoberturaReset extends CiudadanoDomiciliosEvent {
+  const CiudadanoDomicilioCoberturaReset();
+}
+
+// *********************************************************
+// ACTIVAR / DESACTIVAR DOMICILIO
+// *********************************************************
+
+class CiudadanoDomicilioEstadoSubmitted extends CiudadanoDomiciliosEvent {
+  final int idDomicilio;
+  final bool activo;
+
+  const CiudadanoDomicilioEstadoSubmitted({
+    required this.idDomicilio,
+    required this.activo,
+  });
+}

@@ -23,6 +23,7 @@ export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_inic
 
 // DOMICILIO - CIUDADANO
 export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_domicilios/view/ciudadano_domicilios_page.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_domicilios/view/ciudadano_domicilio_form/ciudadano_domicilio_form_page.dart';
 
 // MAPA
 export 'package:app_recoleccion_residuos/src/presentation/screens/mapa/view/mapa_page.dart';

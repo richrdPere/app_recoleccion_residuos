@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:app_recoleccion_residuos/src/data/models/models.dart';
 import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
 
-
 // Widgets
 import 'widgets/ciudadano_inicio_header.dart';
 import 'widgets/ciudadano_operaciones.dart';
@@ -20,6 +19,7 @@ class CiudadanoInicioContent extends StatelessWidget {
   final VoidCallback onRetryCronograma;
   final VoidCallback onOpenCuenta;
   final VoidCallback onOpenMapa;
+  final VoidCallback? onOpenCalendario;
 
   // Campana existente de notificaciones.
   final Widget? campana;
@@ -42,6 +42,7 @@ class CiudadanoInicioContent extends StatelessWidget {
     required this.onRetryCronograma,
     required this.onOpenCuenta,
     required this.onOpenMapa,
+    this.onOpenCalendario,
     this.nombres,
     this.campana,
     this.reportes,
@@ -303,6 +304,7 @@ class CiudadanoInicioContent extends StatelessWidget {
                                 : null,
                             onReintentar: onRetryCronograma,
                             onVerMapa: onOpenMapa,
+                            onVerCalendario: onOpenCalendario,
                           ),
                         ],
 

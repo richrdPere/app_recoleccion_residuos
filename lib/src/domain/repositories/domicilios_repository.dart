@@ -23,7 +23,11 @@ abstract class DomiciliosRepository {
 
   /// 5. OBTENER CRONOGRAMA DEL DOMICILIO
   Future<Resource<ApiResponse<GetDomicilioCronogramaDataModel>>>
-  getDomicilioCronograma({required int idDomicilio});
+  getDomicilioCronograma({
+    required int idDomicilio,
+    String? fechaDesde,
+    String? fechaHasta,
+  });
 
   /// 6. OBTENER SERVICIO ACTIVO DEL DOMICILIO
   Future<Resource<ApiResponse<GetDomicilioServicioActivoDataModel>>>
@@ -32,4 +36,16 @@ abstract class DomiciliosRepository {
   /// 7. ELIMINAR DOMICILIO CIUDADANO
   Future<Resource<ApiResponse<DeleteCiudadanoDomicilioDataModel>>>
   deleteCiudadanoDomicilio({required int idDomicilio});
+
+  /// 8. RESOLVER COBERTURA DEL DOMICILIO
+  Future<Resource<ApiResponse<ResolverCoberturaDataModel>>> resolverCobertura({
+    required ResolverCoberturaRequest request,
+  });
+
+  /// 9. CAMBIAR ESTADO DEL DOMICILIO
+  Future<Resource<ApiResponse<UpdateCiudadanoDomicilioDataModel>>>
+  changeEstadoCiudadanoDomicilio({
+    required int idDomicilio,
+    required bool activo,
+  });
 }

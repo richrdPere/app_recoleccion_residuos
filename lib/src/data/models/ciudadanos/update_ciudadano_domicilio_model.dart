@@ -13,6 +13,8 @@ class UpdateCiudadanoDomicilioRequest {
   final String origenUbicacion;
 
   final String? observacion;
+  final int? idZona;
+  final int? idRuta;
 
   const UpdateCiudadanoDomicilioRequest({
     required this.nombreDomicilio,
@@ -23,6 +25,8 @@ class UpdateCiudadanoDomicilioRequest {
     this.precisionUbicacion,
     this.origenUbicacion = 'MAPA',
     this.observacion,
+    this.idZona,
+    this.idRuta,
   });
 
   Map<String, dynamic> toJson() {
@@ -35,6 +39,8 @@ class UpdateCiudadanoDomicilioRequest {
       'precision_ubicacion': precisionUbicacion,
       'origen_ubicacion': origenUbicacion.trim().toUpperCase(),
       'observacion': observacion?.trim(),
+      if (idZona != null) 'id_zona': idZona,
+      if (idRuta != null) 'id_ruta': idRuta,
     };
   }
 }

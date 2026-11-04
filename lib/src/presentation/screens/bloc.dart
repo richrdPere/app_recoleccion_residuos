@@ -93,3 +93,8 @@ export 'package:app_recoleccion_residuos/src/presentation/screens/incidencias/bl
 export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_mapa/bloc/ciudadano_mapa_bloc.dart';
 export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_mapa/bloc/ciudadano_mapa_event.dart';
 export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_mapa/bloc/ciudadano_mapa_state.dart';
+
+// Calendario - Ciudadano
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_calendario/bloc/ciudadano_calendario_bloc.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_calendario/bloc/ciudadano_calendario_event.dart';
+export 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_calendario/bloc/ciudadano_calendario_state.dart';

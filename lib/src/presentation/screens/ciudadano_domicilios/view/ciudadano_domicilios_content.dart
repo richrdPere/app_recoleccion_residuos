@@ -6,7 +6,7 @@ import 'package:app_recoleccion_residuos/src/data/models/models.dart';
 // Blocs
 import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
 
-enum _DomicilioMenuAction { edit, principal, delete }
+enum _DomicilioMenuAction { edit, principal, changeEstado, delete }
 
 class CiudadanoDomiciliosContent extends StatelessWidget {
   final CiudadanoDomiciliosState state;
@@ -16,7 +16,9 @@ class CiudadanoDomiciliosContent extends StatelessWidget {
   final VoidCallback onCreate;
   final ValueChanged<GetMisDomiciliosDataModel> onEdit;
   final ValueChanged<GetMisDomiciliosDataModel> onSetPrincipal;
+  final ValueChanged<GetMisDomiciliosDataModel> onView;
   final ValueChanged<GetMisDomiciliosDataModel> onDelete;
+  final ValueChanged<GetMisDomiciliosDataModel> onChangeEstado;
   final VoidCallback onBack;
 
   const CiudadanoDomiciliosContent({
@@ -27,7 +29,9 @@ class CiudadanoDomiciliosContent extends StatelessWidget {
     required this.onCreate,
     required this.onEdit,
     required this.onSetPrincipal,
+    required this.onView,
     required this.onDelete,
+    required this.onChangeEstado,
     required this.onBack,
   });
 
@@ -58,7 +62,7 @@ class CiudadanoDomiciliosContent extends StatelessWidget {
         floatingActionButton: FloatingActionButton.extended(
           onPressed: state.isBusy ? null : onCreate,
           icon: const Icon(Icons.add),
-          label: const Text(''),
+          label: const Text('Domicilio'),
         ),
         body: SafeArea(
           child: Column(
@@ -193,9 +197,12 @@ class CiudadanoDomiciliosContent extends StatelessWidget {
                                   processing: state.isProcessingDomicilio(
                                     domicilio.idDomicilio,
                                   ),
+                                  onTap: () => onView(domicilio),
                                   onEdit: () => onEdit(domicilio),
                                   onPrincipal: () => onSetPrincipal(domicilio),
                                   onDelete: () => onDelete(domicilio),
+                                  onChangeEstado: () =>
+                                      onChangeEstado(domicilio),
                                 ),
                               ),
                             ),
@@ -222,17 +229,21 @@ class _DomicilioCard extends StatelessWidget {
   final bool enabled;
   final bool processing;
 
+  final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onPrincipal;
   final VoidCallback onDelete;
+  final VoidCallback onChangeEstado;
 
   const _DomicilioCard({
     required this.domicilio,
     required this.enabled,
     required this.processing,
+    required this.onTap,
     required this.onEdit,
     required this.onPrincipal,
     required this.onDelete,
+    required this.onChangeEstado,
   });
 
   @override
@@ -247,113 +258,140 @@ class _DomicilioCard extends StatelessWidget {
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.home_outlined, color: colors.primary),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    domicilio.nombreDomicilio,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+        child: InkWell(
+          onTap: enabled ? onTap : null,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.home_outlined, color: colors.primary),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      domicilio.nombreDomicilio,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                if (processing)
-                  const Padding(
-                    padding: EdgeInsets.all(12),
-                    child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  )
-                else
-                  PopupMenuButton<_DomicilioMenuAction>(
-                    enabled: enabled,
-                    tooltip: 'Opciones del domicilio',
-                    onSelected: (action) {
-                      switch (action) {
-                        case _DomicilioMenuAction.edit:
-                          onEdit();
-                          break;
-
-                        case _DomicilioMenuAction.principal:
-                          onPrincipal();
-                          break;
-
-                        case _DomicilioMenuAction.delete:
-                          onDelete();
-                          break;
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(
-                        value: _DomicilioMenuAction.edit,
-                        child: Text('Editar'),
+                  if (processing)
+                    const Padding(
+                      padding: EdgeInsets.all(12),
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
                       ),
-                      if (!domicilio.esPrincipal && activo)
+                    )
+                  else
+                    PopupMenuButton<_DomicilioMenuAction>(
+                      enabled: enabled,
+                      tooltip: 'Opciones del domicilio',
+                      onSelected: (action) {
+                        switch (action) {
+                          case _DomicilioMenuAction.edit:
+                            onEdit();
+                            break;
+
+                          case _DomicilioMenuAction.principal:
+                            onPrincipal();
+                            break;
+
+                          case _DomicilioMenuAction.changeEstado:
+                            onChangeEstado();
+                            break;
+
+                          case _DomicilioMenuAction.delete:
+                            onDelete();
+                            break;
+                        }
+                      },
+                      itemBuilder: (context) => [
                         const PopupMenuItem(
-                          value: _DomicilioMenuAction.principal,
-                          child: Text('Establecer como principal'),
+                          value: _DomicilioMenuAction.edit,
+                          child: Text('Editar'),
                         ),
-                      const PopupMenuItem(
-                        value: _DomicilioMenuAction.delete,
-                        child: Text('Eliminar'),
-                      ),
-                    ],
-                  ),
-              ],
-            ),
-            const SizedBox(height: 12),
+                        if (!domicilio.esPrincipal && activo)
+                          const PopupMenuItem(
+                            value: _DomicilioMenuAction.principal,
+                            child: Text('Establecer como principal'),
+                          ),
 
-            Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: [
-                if (domicilio.esPrincipal)
+                        if (domicilio.estadoDomicilio == 'INACTIVO' ||
+                            (domicilio.estadoDomicilio == 'ACTIVO' &&
+                                !domicilio.esPrincipal))
+                          PopupMenuItem(
+                            value: _DomicilioMenuAction.changeEstado,
+                            child: ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              leading: Icon(
+                                domicilio.estadoDomicilio == 'ACTIVO'
+                                    ? Icons.pause_circle_outline
+                                    : Icons.play_circle_outline,
+                              ),
+                              title: Text(
+                                domicilio.estadoDomicilio == 'ACTIVO'
+                                    ? 'Desactivar'
+                                    : 'Activar',
+                              ),
+                            ),
+                          ),
+                        const PopupMenuItem(
+                          value: _DomicilioMenuAction.delete,
+                          child: Text('Eliminar'),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: [
+                  if (domicilio.esPrincipal)
+                    Chip(
+                      avatar: const Icon(Icons.star_rounded, size: 18),
+                      label: const Text('Principal'),
+                      backgroundColor: colors.secondaryContainer,
+                    ),
                   Chip(
-                    avatar: const Icon(Icons.star_rounded, size: 18),
-                    label: const Text('Principal'),
-                    backgroundColor: colors.secondaryContainer,
+                    label: Text(activo ? 'Activo' : domicilio.estadoDomicilio),
                   ),
-                Chip(
-                  label: Text(activo ? 'Activo' : domicilio.estadoDomicilio),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              Text(domicilio.direccion),
+
+              if (referencia != null && referencia.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  referencia,
+                  style: TextStyle(color: colors.onSurfaceVariant),
                 ),
               ],
-            ),
-            const SizedBox(height: 12),
 
-            Text(domicilio.direccion),
-
-            if (referencia != null && referencia.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              const Divider(),
               const SizedBox(height: 8),
+
+              Text('Sector: ${domicilio.zona?.nombre ?? "Sin asignar"}'),
+              const SizedBox(height: 6),
+              Text('Ruta: ${domicilio.ruta?.nombre ?? "Sin asignar"}'),
+              const SizedBox(height: 6),
               Text(
-                referencia,
-                style: TextStyle(color: colors.onSurfaceVariant),
+                domicilio.ubicacionValidada
+                    ? 'Ubicación validada'
+                    : 'Ubicación pendiente de validación',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
               ),
             ],
-
-            const SizedBox(height: 16),
-            const Divider(),
-            const SizedBox(height: 8),
-
-            Text('Sector: ${domicilio.zona?.nombre ?? "Sin asignar"}'),
-            const SizedBox(height: 6),
-            Text('Ruta: ${domicilio.ruta?.nombre ?? "Sin asignar"}'),
-            const SizedBox(height: 6),
-            Text(
-              domicilio.ubicacionValidada
-                  ? 'Ubicación validada'
-                  : 'Ubicación pendiente de validación',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: colors.onSurfaceVariant,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

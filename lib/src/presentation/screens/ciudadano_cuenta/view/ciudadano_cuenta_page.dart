@@ -6,6 +6,8 @@ import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
 
 import 'ciudadano_cuenta_content.dart';
 
+import 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_preferencias/view/ciudadano_preferencias_page.dart';
+
 class CiudadanoCuentaPage extends StatefulWidget {
   const CiudadanoCuentaPage({super.key});
 
@@ -17,6 +19,39 @@ class _CiudadanoCuentaPageState extends State<CiudadanoCuentaPage> {
   bool _logoutDialogOpen = false;
   bool _editPageOpen = false;
   bool _domiciliosPageOpen = false;
+  bool _preferenciasPageOpen = false;
+
+  Future<void> _openPreferencias() async {
+    final cuenta = context.read<CiudadanoCuentaBloc>();
+
+    if (_preferenciasPageOpen ||
+        _domiciliosPageOpen ||
+        _editPageOpen ||
+        _logoutDialogOpen ||
+        cuenta.state.isBusy ||
+        cuenta.state.perfil == null ||
+        !context.read<SessionBloc>().state.isAuthenticated) {
+      return;
+    }
+
+    _preferenciasPageOpen = true;
+
+    try {
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(
+          builder: (_) => const CiudadanoPreferenciasPage(),
+        ),
+      );
+    } finally {
+      _preferenciasPageOpen = false;
+
+      if (mounted &&
+          !cuenta.isClosed &&
+          context.read<SessionBloc>().state.isAuthenticated) {
+        cuenta.add(const CiudadanoCuentaRequested());
+      }
+    }
+  }
 
   // *********************************************************
   // 1. CONSULTAR AL ABRIR
@@ -211,6 +246,7 @@ class _CiudadanoCuentaPageState extends State<CiudadanoCuentaPage> {
           canLogout: isAuthenticated && !state.isBusy,
           onEdit: _editProfile,
           onOpenDomicilios: _openDomicilios,
+          onOpenPreferencias: _openPreferencias,
         );
       },
     );

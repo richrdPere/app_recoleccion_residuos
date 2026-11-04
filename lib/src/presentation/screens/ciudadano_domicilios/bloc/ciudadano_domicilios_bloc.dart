@@ -12,6 +12,7 @@ class CiudadanoDomiciliosBloc
   final DomiciliosUseCases domiciliosUseCases;
 
   int _operationId = 0;
+  int _coberturaId = 0;
 
   CiudadanoDomiciliosBloc(this.domiciliosUseCases)
     : super(const CiudadanoDomiciliosState()) {
@@ -21,6 +22,10 @@ class CiudadanoDomiciliosBloc
     on<CiudadanoDomicilioPrincipalSubmitted>(_onSetPrincipal);
     on<CiudadanoDomicilioDeleteSubmitted>(_onDelete);
     on<CiudadanoDomiciliosReset>(_onReset);
+
+    on<CiudadanoDomicilioCoberturaRequested>(_onResolverCobertura);
+    on<CiudadanoDomicilioCoberturaReset>(_onCoberturaReset);
+    on<CiudadanoDomicilioEstadoSubmitted>(_onChangeEstado);
   }
 
   // *********************************************************
@@ -32,6 +37,7 @@ class CiudadanoDomiciliosBloc
     Emitter<CiudadanoDomiciliosState> emit,
   ) {
     _operationId++;
+    _coberturaId++;
 
     emit(const CiudadanoDomiciliosState());
   }
@@ -372,5 +378,197 @@ class CiudadanoDomiciliosBloc
 
   bool _isCurrent(Emitter<CiudadanoDomiciliosState> emit, int operationId) {
     return !emit.isDone && operationId == _operationId;
+  }
+  // *********************************************************
+  // 11. RESOLVER COBERTURA
+  // *********************************************************
+
+  Future<void> _onResolverCobertura(
+    CiudadanoDomicilioCoberturaRequested event,
+    Emitter<CiudadanoDomiciliosState> emit,
+  ) async {
+    final coberturaId = ++_coberturaId;
+    final request = event.request;
+
+    // Invalida el resultado anterior desde el inicio.
+    // No modifica el listado ni el resultado de las acciones.
+    emit(
+      state.copyWith(
+        coberturaStatus: CiudadanoDomicilioCoberturaStatus.loading,
+        coberturaRequest: request,
+        clearCobertura: true,
+        clearCoberturaError: true,
+      ),
+    );
+
+    if (!request.latitud.isFinite ||
+        !request.longitud.isFinite ||
+        request.latitud < -90 ||
+        request.latitud > 90 ||
+        request.longitud < -180 ||
+        request.longitud > 180) {
+      _emitCoberturaFailure(
+        emit,
+        message: 'Selecciona una ubicación válida para el domicilio.',
+        statusCode: 400,
+      );
+      return;
+    }
+
+    try {
+      final resource = await domiciliosUseCases.resolverCobertura.run(
+        request: request,
+      );
+
+      if (!_isCurrentCobertura(emit, coberturaId)) return;
+
+      if (resource is ErrorData<ApiResponse<ResolverCoberturaDataModel>>) {
+        _emitCoberturaFailure(
+          emit,
+          message: resource.message,
+          statusCode: resource.statusCode,
+        );
+        return;
+      }
+
+      if (resource is! Success<ApiResponse<ResolverCoberturaDataModel>>) {
+        _emitCoberturaFailure(
+          emit,
+          message: 'No se recibió un resultado válido de cobertura.',
+        );
+        return;
+      }
+
+      final api = resource.data;
+      final data = api.data;
+
+      if (!api.success || data == null) {
+        _emitCoberturaFailure(
+          emit,
+          message: 'El servidor no confirmó la consulta de cobertura.',
+        );
+        return;
+      }
+
+      // Verifica que el resultado corresponda al punto solicitado.
+      const tolerance = 0.0000001;
+
+      if (!data.latitud.isFinite ||
+          !data.longitud.isFinite ||
+          (data.latitud - request.latitud).abs() > tolerance ||
+          (data.longitud - request.longitud).abs() > tolerance) {
+        _emitCoberturaFailure(
+          emit,
+          message:
+              'La cobertura recibida no corresponde a la ubicación '
+              'seleccionada. Vuelve a consultar.',
+        );
+        return;
+      }
+
+      // Sin cobertura también es una consulta exitosa.
+      emit(
+        state.copyWith(
+          coberturaStatus: CiudadanoDomicilioCoberturaStatus.ready,
+          cobertura: data,
+          clearCoberturaError: true,
+        ),
+      );
+    } catch (_) {
+      if (!_isCurrentCobertura(emit, coberturaId)) return;
+
+      _emitCoberturaFailure(
+        emit,
+        message:
+            'No se pudo consultar la cobertura. '
+            'Intenta nuevamente.',
+      );
+    }
+  }
+
+  // *********************************************************
+  // 12. LIMPIAR SOLO LA COBERTURA
+  // *********************************************************
+
+  void _onCoberturaReset(
+    CiudadanoDomicilioCoberturaReset event,
+    Emitter<CiudadanoDomiciliosState> emit,
+  ) {
+    // Ignorar cualquier respuesta pendiente del formulario anterior.
+    _coberturaId++;
+
+    emit(
+      state.copyWith(
+        coberturaStatus: CiudadanoDomicilioCoberturaStatus.initial,
+        clearCobertura: true,
+        clearCoberturaRequest: true,
+        clearCoberturaError: true,
+      ),
+    );
+  }
+
+  // *********************************************************
+  // 13. ERROR DE COBERTURA
+  // *********************************************************
+
+  void _emitCoberturaFailure(
+    Emitter<CiudadanoDomiciliosState> emit, {
+    required String message,
+    int? statusCode,
+  }) {
+    emit(
+      state
+          .copyWith(
+            coberturaStatus: CiudadanoDomicilioCoberturaStatus.failure,
+            coberturaErrorMessage: message,
+            coberturaStatusCode: statusCode,
+            clearCobertura: true,
+
+            // Permite limpiar un código de error anterior.
+            clearCoberturaError: true,
+          )
+          .copyWith(
+            coberturaErrorMessage: message,
+            coberturaStatusCode: statusCode,
+          ),
+    );
+  }
+
+  // *********************************************************
+  // 14. DESCARTAR COBERTURAS ANTERIORES
+  // *********************************************************
+
+  bool _isCurrentCobertura(
+    Emitter<CiudadanoDomiciliosState> emit,
+    int coberturaId,
+  ) {
+    return !emit.isDone && coberturaId == _coberturaId;
+  }
+
+  // *********************************************************
+  // 15. CAMBIAR ESTADO Y RECARGAR LISTADO
+  // *********************************************************
+
+  Future<void> _onChangeEstado(
+    CiudadanoDomicilioEstadoSubmitted event,
+    Emitter<CiudadanoDomiciliosState> emit,
+  ) async {
+    await _executeAction<UpdateCiudadanoDomicilioDataModel>(
+      emit,
+      action: CiudadanoDomiciliosAction.changeEstado,
+      idDomicilio: event.idDomicilio,
+      execute: () {
+        return domiciliosUseCases.changeEstadoCiudadanoDomicilio.run(
+          idDomicilio: event.idDomicilio,
+          activo: event.activo,
+        );
+      },
+      resultId: (data) => data.idDomicilio,
+      validateResult: (data) {
+        final esperado = event.activo ? 'ACTIVO' : 'INACTIVO';
+
+        return data.estadoDomicilio == esperado;
+      },
+    );
   }
 }

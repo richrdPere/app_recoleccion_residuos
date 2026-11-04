@@ -6,6 +6,8 @@ import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
 
 import 'ciudadano_inicio_content.dart';
 
+import 'package:app_recoleccion_residuos/src/presentation/screens/ciudadano_calendario/view/ciudadano_calendario_page.dart';
+
 class CiudadanoInicioPage extends StatefulWidget {
   const CiudadanoInicioPage({super.key});
 
@@ -116,6 +118,20 @@ class _CiudadanoInicioPageState extends State<CiudadanoInicioPage> {
               context.push('/ciudadano/alertas');
             },
           ),
+          onOpenCalendario: state.idDomicilioSeleccionado == null
+              ? null
+              : () {
+                  final bloc = context.read<CiudadanoInicioBloc>();
+
+                  Navigator.of(context).push<void>(
+                    MaterialPageRoute<void>(
+                      builder: (_) => CiudadanoCalendarioPage(
+                        idDomicilio: state.idDomicilioSeleccionado!,
+                        domiciliosUseCases: bloc.domiciliosUseCases,
+                      ),
+                    ),
+                  );
+                },
         );
       },
     );

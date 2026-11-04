@@ -350,6 +350,10 @@ abstract class Appmodule {
     getDomicilioServicioActivo: GetDomicilioServicioActivoUC(
       domiciliosRepository,
     ),
+    resolverCobertura: ResolverCoberturaUC(domiciliosRepository),
+    changeEstadoCiudadanoDomicilio: ChangeEstadoCiudadanoDomicilioUC(
+      domiciliosRepository,
+    ),
   );
 
   // - Pref Notification

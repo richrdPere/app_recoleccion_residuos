@@ -82,6 +82,7 @@ export 'package:app_recoleccion_residuos/src/data/models/dispositivos/registrar_
 export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/create_ciudadano_perfil_model.dart';
 export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/get_ciudadano_perfil_model.dart';
 export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/update_ciudadano_perfil_model.dart';
+export 'package:app_recoleccion_residuos/src/data/models/ciudadanos/resolver_cobertura_model.dart';
 
 // =======================================================
 // Domicilios

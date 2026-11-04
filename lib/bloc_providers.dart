@@ -160,4 +160,16 @@ List<BlocProvider> blocProviders = [
       );
     },
   ),
+
+  // *********************************************************
+  // 21. CALENDARIO CIUDADANO
+  // *********************************************************
+  // BlocProvider<CiudadanoCalendarioBloc>(
+  //   create: (_) => CiudadanoCalendarioBloc(
+  //     locator<DomiciliosUseCases>(),
+  //     domiciliosUseCases: null,
+  //     idDomicilio: null,
+  //     mesInicial: null,
+  //   ),
+  // ),
 ];

@@ -10,6 +10,7 @@ class CiudadanoCuentaContent extends StatelessWidget {
   final bool canLogout;
   final VoidCallback onEdit;
   final VoidCallback onOpenDomicilios;
+  final VoidCallback? onOpenPreferencias;
 
   const CiudadanoCuentaContent({
     super.key,
@@ -19,6 +20,7 @@ class CiudadanoCuentaContent extends StatelessWidget {
     required this.canLogout,
     required this.onEdit,
     required this.onOpenDomicilios,
+    this.onOpenPreferencias,
   });
 
   String _display(String? value) {
@@ -41,11 +43,21 @@ class CiudadanoCuentaContent extends StatelessWidget {
         title: 'Mi cuenta',
         automaticallyImplyLeading: false,
         actions: [
+          // Editar perfil ciudadano
           AppBarTitleAction(
             icon: Icons.edit_outlined,
             tooltip: 'Editar perfil ciudadano',
             onPressed: canEdit ? onEdit : null,
           ),
+
+          // Preferencias de avisos
+          AppBarTitleAction(
+            icon: Icons.notifications_active_outlined,
+            tooltip: 'Preferencias de avisos',
+            onPressed: canEdit ? onOpenPreferencias : null,
+          ),
+
+          // Actualizar cuenta
           AppBarTitleAction(
             icon: Icons.refresh_rounded,
             tooltip: state.isBusy

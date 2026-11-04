@@ -8,5 +8,11 @@ class GetDomicilioCronogramaUC {
 
   Future<Resource<ApiResponse<GetDomicilioCronogramaDataModel>>> run({
     required int idDomicilio,
-  }) => domiciliosRepository.getDomicilioCronograma(idDomicilio: idDomicilio);
+    String? fechaDesde,
+    String? fechaHasta,
+  }) => domiciliosRepository.getDomicilioCronograma(
+    idDomicilio: idDomicilio,
+    fechaDesde: fechaDesde,
+    fechaHasta: fechaHasta,
+  );
 }

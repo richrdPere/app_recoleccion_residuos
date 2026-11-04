@@ -11,6 +11,9 @@ import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
 // Content
 import 'ciudadano_domicilios_content.dart';
 
+// Pages
+import 'ciudadano_domicilio_detalle/ciudadano_domicilio_detalle_page.dart';
+
 class CiudadanoDomiciliosPage extends StatefulWidget {
   const CiudadanoDomiciliosPage({super.key});
 
@@ -191,7 +194,217 @@ class _CiudadanoDomiciliosPageState extends State<CiudadanoDomiciliosPage> {
   }
 
   // *********************************************************
-  // 6. INTERFAZ
+  // 6. ABRIR DETALLE A PANTALLA COMPLETA
+  // *********************************************************
+
+  Future<void> _openDetalle(GetMisDomiciliosDataModel domicilio) async {
+    if (_dialogOpen ||
+        _formOpen ||
+        context.read<CiudadanoDomiciliosBloc>().state.isBusy) {
+      return;
+    }
+
+    _dialogOpen = true;
+
+    try {
+      await showDialog<void>(
+        context: context,
+        useSafeArea: false,
+        builder: (_) {
+          return Dialog.fullscreen(
+            child: CiudadanoDomicilioDetallePage(domicilio: domicilio),
+          );
+        },
+      );
+    } finally {
+      _dialogOpen = false;
+    }
+  }
+
+  // *********************************************************
+  // 7. CONFIRMAR ELIMINACIÓN DEL DOMICILIO
+  // *********************************************************
+
+  Future<void> _confirmarEliminar(GetMisDomiciliosDataModel domicilio) async {
+    final bloc = context.read<CiudadanoDomiciliosBloc>();
+
+    if (_dialogOpen || _formOpen || bloc.state.isBusy) {
+      return;
+    }
+
+    _dialogOpen = true;
+
+    try {
+      final confirmado = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) {
+          final colors = Theme.of(dialogContext).colorScheme;
+
+          return AlertDialog(
+            icon: Icon(
+              Icons.delete_outline_rounded,
+              color: colors.error,
+              size: 36,
+            ),
+            title: const Text('Eliminar domicilio'),
+            content: Text(
+              '¿Deseas eliminar "${domicilio.nombreDomicilio}" '
+              'de tus domicilios registrados?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(false);
+                },
+                child: const Text('Cancelar'),
+              ),
+              FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: colors.error,
+                  foregroundColor: colors.onError,
+                ),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(true);
+                },
+                icon: const Icon(Icons.delete_outline_rounded),
+                label: const Text('Eliminar'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (!mounted || confirmado != true || bloc.isClosed) {
+        return;
+      }
+
+      final session = context.read<SessionBloc>().state;
+
+      if (!session.isAuthenticated || bloc.state.isBusy) {
+        return;
+      }
+
+      final existe = bloc.state.domicilios.any(
+        (item) => item.idDomicilio == domicilio.idDomicilio,
+      );
+
+      if (!existe) {
+        _showMessage(
+          'El domicilio ya no está disponible. Actualiza el listado.',
+        );
+        return;
+      }
+
+      bloc.add(
+        CiudadanoDomicilioDeleteSubmitted(idDomicilio: domicilio.idDomicilio),
+      );
+    } finally {
+      _dialogOpen = false;
+    }
+  }
+
+  Future<void> _confirmarEstado(GetMisDomiciliosDataModel domicilio) async {
+    final bloc = context.read<CiudadanoDomiciliosBloc>();
+
+    if (_dialogOpen || _formOpen || bloc.state.isBusy) {
+      return;
+    }
+
+    final activar = domicilio.estadoDomicilio == 'INACTIVO';
+
+    if (!activar && domicilio.esPrincipal) {
+      _showMessage(
+        'Primero establece otro domicilio como principal '
+        'para poder desactivar este.',
+      );
+      return;
+    }
+
+    _dialogOpen = true;
+
+    try {
+      final confirmado = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: Text(activar ? 'Activar domicilio' : 'Desactivar domicilio'),
+            content: Text(
+              activar
+                  ? '¿Deseas volver a utilizar '
+                        '"${domicilio.nombreDomicilio}" '
+                        'para el servicio de recolección?'
+                  : '¿Deseas desactivar '
+                        '"${domicilio.nombreDomicilio}"? '
+                        'La dirección se conservará y podrás '
+                        'activarla nuevamente.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(false);
+                },
+                child: const Text('Cancelar'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(true);
+                },
+                child: Text(activar ? 'Activar' : 'Desactivar'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (!mounted || confirmado != true || bloc.isClosed) {
+        return;
+      }
+
+      if (!context.read<SessionBloc>().state.isAuthenticated ||
+          bloc.state.isBusy) {
+        return;
+      }
+
+      // Comprobar el estado actual después de la confirmación.
+      GetMisDomiciliosDataModel? actual;
+
+      for (final item in bloc.state.domicilios) {
+        if (item.idDomicilio == domicilio.idDomicilio) {
+          actual = item;
+          break;
+        }
+      }
+
+      if (actual == null) {
+        _showMessage('El domicilio ya no está disponible.');
+        return;
+      }
+
+      final esperadoActual = activar ? 'INACTIVO' : 'ACTIVO';
+
+      if (actual.estadoDomicilio != esperadoActual) {
+        _showMessage('El domicilio cambió de estado. Revisa el listado.');
+        return;
+      }
+
+      if (!activar && actual.esPrincipal) {
+        _showMessage('Primero establece otro domicilio como principal.');
+        return;
+      }
+
+      bloc.add(
+        CiudadanoDomicilioEstadoSubmitted(
+          idDomicilio: actual.idDomicilio,
+          activo: activar,
+        ),
+      );
+    } finally {
+      _dialogOpen = false;
+    }
+  }
+
+  // *********************************************************
+  // 8. INTERFAZ
   // *********************************************************
 
   @override
@@ -233,11 +446,17 @@ class _CiudadanoDomiciliosPageState extends State<CiudadanoDomiciliosPage> {
             onEdit: (domicilio) {
               _openForm(domicilio: domicilio);
             },
+            onView: (domicilio) {
+              _openDetalle(domicilio);
+            },
             onSetPrincipal: (domicilio) {
               _confirmAction(domicilio: domicilio, eliminar: false);
             },
             onDelete: (domicilio) {
-              _confirmAction(domicilio: domicilio, eliminar: true);
+              _confirmarEliminar(domicilio);
+            },
+            onChangeEstado: (domicilio) {
+              _confirmarEstado(domicilio);
             },
             onBack: () {
               if (context.canPop()) {

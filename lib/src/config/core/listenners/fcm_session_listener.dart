@@ -18,8 +18,7 @@ class FcmSessionListener extends StatefulWidget {
   });
 
   @override
-  State<FcmSessionListener> createState() =>
-      _FcmSessionListenerState();
+  State<FcmSessionListener> createState() => _FcmSessionListenerState();
 }
 
 class _FcmSessionListenerState extends State<FcmSessionListener>
@@ -39,25 +38,21 @@ class _FcmSessionListenerState extends State<FcmSessionListener>
     });
 
     // Reintenta si el token inicial o el backend fallaron.
-    _retryTimer = Timer.periodic(
-      const Duration(seconds: 30),
-      (_) {
-        if (!mounted) return;
+    _retryTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (!mounted) return;
 
-        final lifecycle = WidgetsBinding.instance.lifecycleState;
+      final lifecycle = WidgetsBinding.instance.lifecycleState;
 
-        if (lifecycle != null &&
-            lifecycle != AppLifecycleState.resumed) {
-          return;
-        }
+      if (lifecycle != null && lifecycle != AppLifecycleState.resumed) {
+        return;
+      }
 
-        final state = context.read<SessionBloc>().state;
+      final state = context.read<SessionBloc>().state;
 
-        if (state.isAuthenticated) {
-          _sync(state);
-        }
-      },
-    );
+      if (state.isAuthenticated) {
+        _sync(state);
+      }
+    });
   }
 
   void _sync(SessionState state) {

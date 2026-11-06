@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:path/path.dart' as path;
 
-
 class HttpServiceHelper {
   const HttpServiceHelper._();
 

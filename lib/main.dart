@@ -14,6 +14,7 @@ import 'package:app_recoleccion_residuos/src/domain/uses_cases.dart';
 // Config
 import 'package:app_recoleccion_residuos/src/config/router/app_router.dart';
 import 'package:app_recoleccion_residuos/src/config/theme/app_theme.dart';
+import 'package:app_recoleccion_residuos/src/config/core/sync/operacion_offline_scope.dart';
 
 // Listeners
 import 'package:app_recoleccion_residuos/src/config/core/listenners/auth_listener.dart';
@@ -85,17 +86,21 @@ class MyApp extends StatelessWidget {
 
         // Toasts y coordinación de autenticación
         builder: (context, child) {
-          return toastBuilder(
-            context,
-            AuthListener(
-              router: appRouter,
-              scaffoldMessengerKey: rootScaffoldMessengerKey,
-              child: FcmSessionListener(
-                coordinator: locator<FcmSessionCoordinator>(),
-                child: SocketSessionListener(
-                  child: NotificationsListener(
-                    useCases: locator<NotificacionesUseCases>(),
-                    child: child ?? const SizedBox.shrink(),
+          return OperacionOfflineScope(
+            child: toastBuilder(
+              context,
+              AuthListener(
+                router: appRouter,
+                scaffoldMessengerKey: rootScaffoldMessengerKey,
+
+                child: FcmSessionListener(
+                  coordinator: locator<FcmSessionCoordinator>(),
+
+                  child: SocketSessionListener(
+                    child: NotificationsListener(
+                      useCases: locator<NotificacionesUseCases>(),
+                      child: child ?? const SizedBox.shrink(),
+                    ),
                   ),
                 ),
               ),

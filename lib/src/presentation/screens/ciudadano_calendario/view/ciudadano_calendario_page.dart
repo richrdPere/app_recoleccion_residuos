@@ -21,26 +21,16 @@ class CiudadanoCalendarioPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final peru = DateTime.now().toUtc().subtract(
-          const Duration(hours: 5),
-        );
+    final peru = DateTime.now().toUtc().subtract(const Duration(hours: 5));
 
-    final mesInicial = DateTime.utc(
-      peru.year,
-      peru.month,
-      1,
-    );
+    final mesInicial = DateTime.utc(peru.year, peru.month, 1);
 
     return BlocProvider(
       create: (_) => CiudadanoCalendarioBloc(
         domiciliosUseCases: domiciliosUseCases,
         idDomicilio: idDomicilio,
         mesInicial: mesInicial,
-      )..add(
-          CiudadanoCalendarioRequested(
-            mes: mesInicial,
-          ),
-        ),
+      )..add(CiudadanoCalendarioRequested(mes: mesInicial)),
       child: const _CalendarioView(),
     );
   }
@@ -49,19 +39,13 @@ class CiudadanoCalendarioPage extends StatelessWidget {
 class _CalendarioView extends StatelessWidget {
   const _CalendarioView();
 
-  void _consultar(
-    BuildContext context,
-    DateTime mes,
-  ) {
+  void _consultar(BuildContext context, DateTime mes) {
     context.read<CiudadanoCalendarioBloc>().add(
-          CiudadanoCalendarioRequested(mes: mes),
-        );
+      CiudadanoCalendarioRequested(mes: mes),
+    );
   }
 
-  Future<void> _seleccionarMes(
-    BuildContext context,
-    DateTime mes,
-  ) async {
+  Future<void> _seleccionarMes(BuildContext context, DateTime mes) async {
     final seleccionado = await showDatePicker(
       context: context,
       initialDate: DateTime(mes.year, mes.month, 1),
@@ -72,21 +56,12 @@ class _CalendarioView extends StatelessWidget {
 
     if (!context.mounted || seleccionado == null) return;
 
-    _consultar(
-      context,
-      DateTime.utc(
-        seleccionado.year,
-        seleccionado.month,
-        1,
-      ),
-    );
+    _consultar(context, DateTime.utc(seleccionado.year, seleccionado.month, 1));
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<
-        CiudadanoCalendarioBloc,
-        CiudadanoCalendarioState>(
+    return BlocBuilder<CiudadanoCalendarioBloc, CiudadanoCalendarioState>(
       builder: (context, state) {
         return CiudadanoCalendarioContent(
           state: state,

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -8,7 +7,6 @@ import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
 
 // Content
 import 'logout_content.dart';
-
 
 class LogoutPage extends StatefulWidget {
   const LogoutPage({super.key});
@@ -24,9 +22,7 @@ class _LogoutPageState extends State<LogoutPage> {
   void initState() {
     super.initState();
 
-    _logoutBloc = LogoutBloc(
-      sessionBloc: context.read<SessionBloc>(),
-    );
+    _logoutBloc = LogoutBloc(sessionBloc: context.read<SessionBloc>());
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;

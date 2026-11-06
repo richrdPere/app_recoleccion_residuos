@@ -96,9 +96,7 @@ class CiudadanoProximaRecoleccionCard extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             if (habitual)
-              const Text(
-                'Horario de referencia, sujeto a programación.',
-              )
+              const Text('Horario de referencia, sujeto a programación.')
             else ...[
               Align(
                 alignment: Alignment.centerLeft,
@@ -127,9 +125,7 @@ class CiudadanoProximaRecoleccionCard extends StatelessWidget {
       margin: EdgeInsets.zero,
       elevation: 0,
       color: theme.colorScheme.primaryContainer,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -171,8 +167,7 @@ class CiudadanoProximaRecoleccionCard extends StatelessWidget {
                 titulo: 'Próximo servicio programado',
                 icono: Icons.local_shipping_outlined,
                 evento: data.proximaRecoleccion,
-                vacio:
-                    'No hay servicios programados en el periodo consultado.',
+                vacio: 'No hay servicios programados en el periodo consultado.',
                 habitual: false,
               ),
               const SizedBox(height: 12),
@@ -196,9 +191,7 @@ class CiudadanoProximaRecoleccionCard extends StatelessWidget {
                   OutlinedButton.icon(
                     onPressed: cargando ? null : onReintentar,
                     icon: const Icon(Icons.refresh),
-                    label: Text(
-                      error != null ? 'Reintentar' : 'Actualizar',
-                    ),
+                    label: Text(error != null ? 'Reintentar' : 'Actualizar'),
                   ),
                 if (onVerCalendario != null)
                   FilledButton.icon(

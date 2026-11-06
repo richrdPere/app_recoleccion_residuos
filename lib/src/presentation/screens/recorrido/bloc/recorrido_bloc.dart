@@ -84,6 +84,10 @@ class RecorridoBloc extends Bloc<RecorridoEvent, RecorridoState> {
     try {
       final response = await ejecutar();
 
+      if (response is PendingOperation<ApiResponse<T>>) {
+        return response;
+      }
+
       if (response is Success<ApiResponse<T>>) {
         final api = response.data;
 
@@ -266,6 +270,47 @@ class RecorridoBloc extends Bloc<RecorridoEvent, RecorridoState> {
     );
 
     if (emit.isDone) return;
+
+    if (response is PendingOperation<ApiResponse<RecorridoDataModel>>) {
+      final local = response.data?.data;
+
+      if (local == null) {
+        emit(
+          state.copyWith(
+            accionResponse: ErrorData<ApiResponse<RecorridoDataModel>>(
+              message: 'La operación local no devolvió su estado.',
+            ),
+          ),
+        );
+
+        return;
+      }
+
+      final finalizando = accion == RecorridoAccion.finalizar;
+
+      final actualizarDetalle = state.idDetalleSolicitado == local.idRecorrido;
+
+      emit(
+        state.copyWith(
+          accionResponse: response,
+
+          recorridoActivo: finalizando ? null : local,
+
+          recorridoDetalle: actualizarDetalle ? local : state.recorridoDetalle,
+
+          activoResponse: Success<ApiResponse<RecorridoDataModel?>>(
+            ApiResponse<RecorridoDataModel?>(
+              success: true,
+              message: 'Estado local pendiente de sincronización.',
+              data: finalizando ? null : local,
+            ),
+          ),
+        ),
+      );
+
+      // El motor consultará el estado remoto cuando sincronice.
+      return;
+    }
 
     if (response is! Success<ApiResponse<RecorridoDataModel>>) {
       emit(state.copyWith(accionResponse: response));

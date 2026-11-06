@@ -10,6 +10,9 @@ import 'package:app_recoleccion_residuos/src/domain/repositories.dart';
 // Modelos
 import 'package:app_recoleccion_residuos/src/data/models/models.dart';
 
+// Sync
+import 'package:app_recoleccion_residuos/src/config/core/sync/operacion_offline.dart';
+
 class RecorridoRepositoryImpl implements RecorridoRepository {
   final RecorridoService recorridoService;
   final AuthRepository authRepository;
@@ -24,16 +27,20 @@ class RecorridoRepositoryImpl implements RecorridoRepository {
     required int idProgramacion,
     required IniciarRecorridoRequest request,
   }) async {
-    final token = await authRepository.getToken();
-    if (token == null) {
-      return ErrorData(message: 'No existe una sesión iniciada.');
-    }
-
-    return await recorridoService.iniciarRecorrido(
-      idProgramacion: idProgramacion,
-      request: request,
-      token: token,
+    return await OperacionOffline.instance.iniciar(
+      idProgramacion,
+      request.toJson(),
     );
+    // final token = await authRepository.getToken();
+    // if (token == null) {
+    //   return ErrorData(message: 'No existe una sesión iniciada.');
+    // }
+
+    // return await recorridoService.iniciarRecorrido(
+    //   idProgramacion: idProgramacion,
+    //   request: request,
+    //   token: token,
+    // );
   }
 
   // *********************************************************
@@ -44,16 +51,21 @@ class RecorridoRepositoryImpl implements RecorridoRepository {
     required int idRecorrido,
     required PausarRecorridoRequest request,
   }) async {
-    final token = await authRepository.getToken();
-    if (token == null) {
-      return ErrorData(message: 'No existe una sesión iniciada.');
-    }
-
-    return await recorridoService.pausarRecorrido(
-      idRecorrido: idRecorrido,
-      request: request,
-      token: token,
+    return await OperacionOffline.instance.cambiar(
+      idRecorrido,
+      'pausar',
+      request.toJson(),
     );
+    // final token = await authRepository.getToken();
+    // if (token == null) {
+    //   return ErrorData(message: 'No existe una sesión iniciada.');
+    // }
+
+    // return await recorridoService.pausarRecorrido(
+    //   idRecorrido: idRecorrido,
+    //   request: request,
+    //   token: token,
+    // );
   }
 
   // *********************************************************
@@ -64,16 +76,21 @@ class RecorridoRepositoryImpl implements RecorridoRepository {
     required int idRecorrido,
     required ReanudarRecorridoRequest request,
   }) async {
-    final token = await authRepository.getToken();
-    if (token == null) {
-      return ErrorData(message: 'No existe una sesión iniciada.');
-    }
-
-    return await recorridoService.reanudarRecorrido(
-      idRecorrido: idRecorrido,
-      request: request,
-      token: token,
+    return await OperacionOffline.instance.cambiar(
+      idRecorrido,
+      'reanudar',
+      request.toJson(),
     );
+    // final token = await authRepository.getToken();
+    // if (token == null) {
+    //   return ErrorData(message: 'No existe una sesión iniciada.');
+    // }
+
+    // return await recorridoService.reanudarRecorrido(
+    //   idRecorrido: idRecorrido,
+    //   request: request,
+    //   token: token,
+    // );
   }
 
   // *********************************************************
@@ -84,16 +101,22 @@ class RecorridoRepositoryImpl implements RecorridoRepository {
     required int idRecorrido,
     required FinalizarRecorridoRequest request,
   }) async {
-    final token = await authRepository.getToken();
-    if (token == null) {
-      return ErrorData(message: 'No existe una sesión iniciada.');
-    }
-
-    return await recorridoService.finalizarRecorrido(
-      idRecorrido: idRecorrido,
-      request: request,
-      token: token,
+    return await OperacionOffline.instance.cambiar(
+      idRecorrido,
+      'finalizar',
+      request.toJson(),
     );
+
+    // final token = await authRepository.getToken();
+    // if (token == null) {
+    //   return ErrorData(message: 'No existe una sesión iniciada.');
+    // }
+
+    // return await recorridoService.finalizarRecorrido(
+    //   idRecorrido: idRecorrido,
+    //   request: request,
+    //   token: token,
+    // );
   }
 
   // *********************************************************
@@ -102,12 +125,13 @@ class RecorridoRepositoryImpl implements RecorridoRepository {
   @override
   Future<Resource<ApiResponse<RecorridoDataModel?>>>
   getRecorridoActivo() async {
-    final token = await authRepository.getToken();
-    if (token == null) {
-      return ErrorData(message: 'No existe una sesión iniciada.');
-    }
+    return await OperacionOffline.instance.activo();
+    // final token = await authRepository.getToken();
+    // if (token == null) {
+    //   return ErrorData(message: 'No existe una sesión iniciada.');
+    // }
 
-    return await recorridoService.getRecorridoActivo(token: token);
+    // return await recorridoService.getRecorridoActivo(token: token);
   }
 
   // *********************************************************

@@ -31,7 +31,6 @@ class RecorridoContent extends StatelessWidget {
     required this.onReanudar,
     required this.onFinalizar,
     this.onIrAInicio,
-    
   });
 
   bool get _isBusy =>

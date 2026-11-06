@@ -24,3 +24,18 @@ class ErrorData<T> extends Resource<T> {
   @override
   String toString() => fullMessage;
 }
+
+class PendingOperation<T> extends Resource<T> {
+  final String clave;
+  final String message;
+
+  /// Puede contener una proyección local.
+  /// No representa una confirmación del servidor.
+  final T? data;
+
+  PendingOperation({required this.clave, required this.message, this.data});
+}
+
+// Success(...)          // Confirmado o consultado.
+// PendingOperation(...) // Guardado localmente; falta sincronizar.
+// ErrorData(...)        // No se pudo completar.

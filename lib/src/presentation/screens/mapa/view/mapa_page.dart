@@ -22,7 +22,6 @@ import 'controllers/mapa_ubicacion_controller.dart';
 import 'controllers/mapa_geocoding_controller.dart';
 import 'controllers/mapa_directions_controller.dart';
 import 'controllers/mapa_recorrido_controller.dart';
-import 'controllers/mapa_tracking_controller.dart';
 
 // Content
 import 'mapa_content.dart';
@@ -51,7 +50,6 @@ class _MapaPageState extends State<MapaPage> {
   late final MapaGeocodingController _geocodingController;
   late final MapaDirectionsController _directionsController;
   late final MapaRecorridoController _recorridoController;
-  late final MapaTrackingController _trackingController;
 
   // *********************************************************
   // MAPA Y DATOS VISUALES
@@ -134,24 +132,6 @@ class _MapaPageState extends State<MapaPage> {
     _recorridoController.addListener(_refrescarEstadoRecorrido);
 
     _recorridoBloc.add(const ObtenerRecorridoActivo());
-
-    // 6. Tracking
-    _trackingController = MapaTrackingController(
-      recorridoBloc: _recorridoBloc,
-      trackingBloc: context.read<TrackingBloc>(),
-
-      obtenerUbicacion: () {
-        return context
-            .read<GeolocatorBloc>()
-            .geolocatorUseCases
-            .obtenerUbicacionActual
-            .run(tiempoLimite: const Duration(seconds: 20));
-      },
-
-      onMensaje: (mensaje) {
-        _mensaje(mensaje);
-      },
-    );
 
     // Se conserva la misma instancia del widget del mapa.
     _mapaBase = MapaBaseConBloc(
@@ -345,6 +325,17 @@ class _MapaPageState extends State<MapaPage> {
   void _onRecorrido(BuildContext context, RecorridoState state) {
     final resultado = state.accionResponse;
 
+    if (resultado is PendingOperation<ApiResponse<RecorridoDataModel>>) {
+      if (state.accion == RecorridoAccion.finalizar) {
+        setState(() {
+          _programacionFinalizada = true;
+        });
+      }
+
+      _mensaje(resultado.message);
+      return;
+    }
+
     if (resultado is Success<ApiResponse<RecorridoDataModel>>) {
       if (state.accion == RecorridoAccion.finalizar) {
         setState(() {
@@ -410,8 +401,6 @@ class _MapaPageState extends State<MapaPage> {
 
   @override
   void dispose() {
-    _trackingController.dispose();
-
     _recorridoController.removeListener(_refrescarEstadoRecorrido);
     _recorridoController.dispose();
 

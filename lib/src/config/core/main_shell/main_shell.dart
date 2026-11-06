@@ -5,6 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:app_recoleccion_residuos/src/presentation/shared/widgets/customs/custom_bottom_navigation.dart';
 // import 'package:app_recoleccion_residuos/src/presentation/screens/notificaciones/view/widgets/notifications_bell.dart';
 
+// Sync
+import 'package:app_recoleccion_residuos/src/config/core/sync/estado_operacion_offline.dart';
+
+import 'package:app_recoleccion_residuos/src/presentation/screens/equipo/view/equipo_page.dart';
+
 class MainShell extends StatelessWidget {
   final Widget child;
 
@@ -48,7 +53,33 @@ class MainShell extends StatelessWidget {
     final currentIndex = _getCurrentIndex(location);
 
     return Scaffold(
-      body: child,
+      // body: child,
+      body: Column(
+        children: [
+          const EstadoOperacionOffline(),
+
+          // SafeArea(
+          //   bottom: false,
+          //   child: Align(
+          //     alignment: Alignment.centerRight,
+
+          //     child: TextButton.icon(
+          //       icon: const Icon(Icons.assignment_outlined),
+
+          //       label: const Text('Trabajo del equipo'),
+
+          //       onPressed: () {
+          //         Navigator.of(context).push(
+          //           MaterialPageRoute<void>(builder: (_) => const EquipoPage()),
+          //         );
+          //       },
+          //     ),
+          //   ),
+          // ),
+
+          Expanded(child: child),
+        ],
+      ),
       bottomNavigationBar: CustomBottomNavigation(
         currentIndex: currentIndex,
         onTap: (index) {

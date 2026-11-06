@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
 
-
 class LogoutBloc extends Bloc<LogoutEvent, LogoutState> {
   final SessionBloc sessionBloc;
 

@@ -12,6 +12,7 @@ import 'package:app_recoleccion_residuos/src/domain/utils/resource.dart';
 
 // Bloc
 import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 typedef MostrarMensajeRecorrido =
     void Function(String mensaje, {VoidCallback? accion});
@@ -88,6 +89,12 @@ class MapaRecorridoController extends ChangeNotifier {
 
   Future<void> ejecutar(BuildContext context, RecorridoAccion accion) async {
     if (!context.mounted || operacionOcupada) return;
+
+    if (context.read<SessionBloc>().state.user?.esConductor != true) {
+      onMensaje('Esta acción corresponde al conductor.');
+
+      return;
+    }
 
     final estadoInicial = recorridoBloc.state;
     final recorridoInicial = estadoInicial.recorridoActivo;

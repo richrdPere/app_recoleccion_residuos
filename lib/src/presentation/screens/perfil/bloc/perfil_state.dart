@@ -1,12 +1,6 @@
 import 'package:app_recoleccion_residuos/src/data/models/models.dart';
 
-enum PerfilStatus {
-  initial,
-  loading,
-  refreshing,
-  success,
-  failure,
-}
+enum PerfilStatus { initial, loading, refreshing, success, failure }
 
 class PerfilState {
   final PerfilStatus status;

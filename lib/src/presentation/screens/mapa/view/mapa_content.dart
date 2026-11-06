@@ -249,7 +249,16 @@ class MapaContent extends StatelessWidget {
             final activoResponse = recorridoState.activoResponse;
 
             if (activoResponse is ErrorData<ApiResponse<RecorridoDataModel?>>) {
-              error = 'No se pudo actualizar el recorrido activo.';
+              final codigo = activoResponse.statusCode;
+              final detalleError = activoResponse.fullMessage.trim();
+
+              error = detalleError.isEmpty
+                  ? 'No se pudo consultar el recorrido activo.'
+                  : detalleError;
+
+              if (codigo != null && codigo > 0) {
+                error = 'HTTP $codigo · $error';
+              }
             } else if (programacionId != null &&
                 programacionesState.idProgramacionDetalle == programacionId &&
                 resultado

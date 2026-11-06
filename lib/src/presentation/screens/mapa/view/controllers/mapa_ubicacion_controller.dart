@@ -125,31 +125,29 @@ class MapaUbicacionController extends ChangeNotifier
   // *********************************************************
 
   void _procesarServicio(Resource<bool> recurso) {
-  if (recurso is ErrorData<bool>) {
-    _finalizar();
-    onMensaje(recurso.fullMessage);
-    return;
+    if (recurso is ErrorData<bool>) {
+      _finalizar();
+      onMensaje(recurso.fullMessage);
+      return;
+    }
+
+    if (recurso is! Success<bool>) return;
+
+    if (!recurso.data) {
+      _finalizar();
+
+      onMensaje(
+        'El permiso está concedido, pero la ubicación '
+        'del dispositivo está desactivada.',
+        accion: abrirConfiguracionUbicacion,
+      );
+      return;
+    }
+
+    _cambiarPaso(_PasoUbicacion.posicion);
+
+    geolocatorBloc.add(const ObtenerUbicacionActualGeolocator());
   }
-
-  if (recurso is! Success<bool>) return;
-
-  if (!recurso.data) {
-    _finalizar();
-
-    onMensaje(
-      'El permiso está concedido, pero la ubicación '
-      'del dispositivo está desactivada.',
-      accion: abrirConfiguracionUbicacion,
-    );
-    return;
-  }
-
-  _cambiarPaso(_PasoUbicacion.posicion);
-
-  geolocatorBloc.add(
-    const ObtenerUbicacionActualGeolocator(),
-  );
-}
 
   // *********************************************************
   // 4. VERIFICAR / SOLICITAR PERMISO

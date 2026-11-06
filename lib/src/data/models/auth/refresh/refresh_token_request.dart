@@ -8,9 +8,6 @@ class RefreshTokenRequest {
   });
 
   Map<String, dynamic> toJson() {
-    return {
-      'refresh_token': refreshToken,
-      'dispositivo': dispositivo,
-    };
+    return {'refresh_token': refreshToken, 'dispositivo': dispositivo};
   }
 }

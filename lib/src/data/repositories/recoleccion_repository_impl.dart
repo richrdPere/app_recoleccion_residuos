@@ -10,6 +10,9 @@ import 'package:app_recoleccion_residuos/src/domain/repositories.dart';
 // Modelos
 import 'package:app_recoleccion_residuos/src/data/models/models.dart';
 
+// Sync
+import 'package:app_recoleccion_residuos/src/config/core/sync/operacion_offline.dart';
+
 class RecoleccionRepositoryImpl implements RecoleccionRepository {
   final RecoleccionService recoleccionService;
   final AuthRepository authRepository;
@@ -22,15 +25,21 @@ class RecoleccionRepositoryImpl implements RecoleccionRepository {
   @override
   Future<Resource<ApiResponse<RegistrarRecoleccionDataModel>>>
   registrarRecoleccion({required RegistrarRecoleccionRequest request}) async {
-    final token = await authRepository.getToken();
-    if (token == null) {
-      return ErrorData(message: 'No existe una sesión iniciada.');
-    }
+    return await OperacionOffline.instance
+        .guardar<RegistrarRecoleccionDataModel>(
+          'recoleccion',
+          request.toJson(),
+        );
 
-    return await recoleccionService.registrarRecoleccion(
-      request: request,
-      token: token,
-    );
+    // final token = await authRepository.getToken();
+    // if (token == null) {
+    //   return ErrorData(message: 'No existe una sesión iniciada.');
+    // }
+
+    // return await recoleccionService.registrarRecoleccion(
+    //   request: request,
+    //   token: token,
+    // );
   }
 
   // *********************************************************
@@ -41,15 +50,26 @@ class RecoleccionRepositoryImpl implements RecoleccionRepository {
   registrarRecoleccionLote({
     required RegistrarRecoleccionLoteRequest request,
   }) async {
-    final token = await authRepository.getToken();
-    if (token == null) {
-      return ErrorData(message: 'No existe una sesión iniciada.');
-    }
+    final json = request.toJson();
 
-    return await recoleccionService.registrarRecoleccionLote(
-      request: request,
-      token: token,
-    );
+    return await OperacionOffline.instance
+        .guardarLote<RegistrarRecoleccionLoteDataModel>(
+          'recoleccion',
+          request.idRecorrido,
+          (json['recolecciones'] as List)
+              .map((item) => Map<String, dynamic>.from(item as Map))
+              .toList(),
+        );
+
+    // final token = await authRepository.getToken();
+    // if (token == null) {
+    //   return ErrorData(message: 'No existe una sesión iniciada.');
+    // }
+
+    // return await recoleccionService.registrarRecoleccionLote(
+    //   request: request,
+    //   token: token,
+    // );
   }
 
   // *********************************************************
@@ -58,15 +78,36 @@ class RecoleccionRepositoryImpl implements RecoleccionRepository {
   @override
   Future<Resource<ApiResponse<List<PuntoRecorridoDataModel>>>>
   getPuntosRecorrido({required int idRecorrido}) async {
-    final token = await authRepository.getToken();
-    if (token == null) {
-      return ErrorData(message: 'No existe una sesión iniciada.');
+    try {
+      final body = await OperacionOffline.instance.consultar(
+        '/recolecciones/recorridos/$idRecorrido/puntos',
+      );
+
+      return Success(
+        ApiResponse<List<PuntoRecorridoDataModel>>.fromJson(
+          body,
+          (raw) => (raw as List)
+              .map(
+                (item) => PuntoRecorridoDataModel.fromJson(
+                  Map<String, dynamic>.from(item as Map),
+                ),
+              )
+              .toList(),
+        ),
+      );
+    } catch (error) {
+      return ErrorData(message: error.toString());
     }
 
-    return await recoleccionService.getPuntosRecorrido(
-      idRecorrido: idRecorrido,
-      token: token,
-    );
+    // final token = await authRepository.getToken();
+    // if (token == null) {
+    //   return ErrorData(message: 'No existe una sesión iniciada.');
+    // }
+
+    // return await recoleccionService.getPuntosRecorrido(
+    //   idRecorrido: idRecorrido,
+    //   token: token,
+    // );
   }
 
   // *********************************************************

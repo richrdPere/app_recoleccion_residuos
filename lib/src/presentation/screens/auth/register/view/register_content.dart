@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,7 +9,6 @@ import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
 // Widgets
 import 'package:app_recoleccion_residuos/src/presentation/shared/widgets/app_widgets/app_geometrical_background.dart';
 import 'package:app_recoleccion_residuos/src/presentation/shared/widgets/customs/custom_input.dart';
-
 
 class RegisterContent extends StatefulWidget {
   const RegisterContent({super.key});

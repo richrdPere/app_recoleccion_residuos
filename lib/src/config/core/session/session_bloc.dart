@@ -1,11 +1,17 @@
-import 'package:app_recoleccion_residuos/src/domain/uses_cases.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:async';
+import 'dart:convert';
 
+// Uses cases
+import 'package:app_recoleccion_residuos/src/domain/uses_cases.dart';
+
+// Modelos
 import 'package:app_recoleccion_residuos/src/data/models/models.dart';
+
+// Resources
 import 'package:app_recoleccion_residuos/src/domain/utils/resource.dart';
 
-// Agrega el import de tu clase AuthUsesCases.
-
+// Bloc
 import 'session_event.dart';
 import 'session_state.dart';
 
@@ -70,6 +76,107 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
         ),
       );
     }
+  }
+
+  Future<String?>? _tokenOperacionPendiente;
+
+  Map<String, dynamic>? _leerPayloadToken(String token) {
+    try {
+      final partes = token.split('.');
+
+      if (partes.length != 3) return null;
+
+      final contenido = utf8.decode(
+        base64Url.decode(base64Url.normalize(partes[1])),
+      );
+
+      return Map<String, dynamic>.from(jsonDecode(contenido) as Map);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  bool _tokenTieneVigencia(String token, {int margenSegundos = 30}) {
+    final payload = _leerPayloadToken(token);
+    final exp = payload?['exp'];
+
+    return exp is num &&
+        exp * 1000 >
+            DateTime.now().millisecondsSinceEpoch + margenSegundos * 1000;
+  }
+
+  /// Reutiliza el evento de renovación que ya utiliza
+  /// AuthListener y SocketSessionListener.
+  Future<String?> tokenParaOperacion({bool forzar = false}) {
+    if (_tokenOperacionPendiente != null) {
+      return _tokenOperacionPendiente!;
+    }
+
+    final completer = Completer<String?>();
+    _tokenOperacionPendiente = completer.future;
+
+    () async {
+      try {
+        final anterior = state.session;
+
+        if (!state.isAuthenticated || anterior == null) {
+          completer.complete(null);
+          return;
+        }
+
+        if (!forzar && _tokenTieneVigencia(anterior.accessToken)) {
+          completer.complete(anterior.accessToken);
+          return;
+        }
+
+        final usuario = anterior.usuario.idUsuario;
+
+        final sessionId = _leerPayloadToken(
+          anterior.accessToken,
+        )?['session_id'];
+
+        // Suscribir antes de agregar el evento.
+        final respuesta = stream.firstWhere((nuevo) {
+          return !nuevo.isAuthenticated ||
+              nuevo.session?.accessToken != anterior.accessToken ||
+              nuevo.errorMessage != null;
+        });
+
+        add(const SessionRefreshRequested());
+
+        final nuevo = await respuesta.timeout(
+          const Duration(seconds: 20),
+          onTimeout: () => state,
+        );
+
+        final sesion = nuevo.session;
+
+        if (!nuevo.isAuthenticated ||
+            sesion == null ||
+            sesion.usuario.idUsuario != usuario ||
+            _leerPayloadToken(sesion.accessToken)?['session_id'] != sessionId) {
+          completer.complete(null);
+          return;
+        }
+
+        if (forzar && sesion.accessToken == anterior.accessToken) {
+          completer.complete(null);
+          return;
+        }
+
+        completer.complete(
+          _tokenTieneVigencia(sesion.accessToken, margenSegundos: 5)
+              ? sesion.accessToken
+              : null,
+        );
+      } catch (_) {
+        completer.complete(null);
+      } finally {
+        _tokenOperacionPendiente = null;
+      }
+    }();
+
+    return completer.future;
   }
 
   // *********************************************************

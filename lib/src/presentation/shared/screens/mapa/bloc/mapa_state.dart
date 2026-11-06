@@ -15,15 +15,11 @@ class MapaConfiguracionCargando extends MapaState {
 class MapaConfiguracionDisponible extends MapaState {
   final MapaConfiguracion configuracion;
 
-  const MapaConfiguracionDisponible({
-    required this.configuracion,
-  });
+  const MapaConfiguracionDisponible({required this.configuracion});
 }
 
 class MapaConfiguracionError extends MapaState {
   final String mensaje;
 
-  const MapaConfiguracionError({
-    required this.mensaje,
-  });
+  const MapaConfiguracionError({required this.mensaje});
 }

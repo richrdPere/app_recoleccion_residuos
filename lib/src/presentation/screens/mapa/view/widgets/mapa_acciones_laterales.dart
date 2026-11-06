@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:app_recoleccion_residuos/src/config/core/session/session_bloc.dart';
+
 class MapaAccionesLaterales extends StatelessWidget {
   final VoidCallback? onCentrarUbicacion;
   final VoidCallback? onAjustarRuta;
@@ -39,6 +43,8 @@ class MapaAccionesLaterales extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final conductor =
+        context.watch<SessionBloc>().state.user?.esConductor == true;
 
     // Recibe la altura disponible desde MapaContent.
     // En pantallas pequeñas permite desplazar los controles.
@@ -62,7 +68,7 @@ class MapaAccionesLaterales extends StatelessWidget {
             onPressed: onAjustarRuta,
           ),
 
-          if (puedeIniciar || puedePausar || puedeReanudar) ...[
+          if (conductor && (puedeIniciar || puedePausar || puedeReanudar)) ...[
             const SizedBox(height: 16),
 
             if (puedeIniciar)
@@ -93,7 +99,7 @@ class MapaAccionesLaterales extends StatelessWidget {
               ),
           ],
 
-          if (puedeFinalizar) ...[
+          if (conductor && puedeFinalizar) ...[
             const SizedBox(height: 8),
 
             _MapaBotonLateral(

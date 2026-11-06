@@ -5,8 +5,8 @@ class RegistrarRecoleccionRequest {
   final double latitud;
   final double longitud;
   final double? precisionGps;
-  final double? cantidadRecolectada;
-  final String unidadMedida;
+  // final double? cantidadRecolectada;
+  // final String unidadMedida;
   final String? observacion;
   final String claveIdempotencia;
 
@@ -17,8 +17,8 @@ class RegistrarRecoleccionRequest {
     required this.latitud,
     required this.longitud,
     this.precisionGps,
-    this.cantidadRecolectada,
-    required this.unidadMedida,
+    // this.cantidadRecolectada,
+    // required this.unidadMedida,
     this.observacion,
     required this.claveIdempotencia,
   });
@@ -31,9 +31,9 @@ class RegistrarRecoleccionRequest {
       'latitud': latitud,
       'longitud': longitud,
       if (precisionGps != null) 'precision_gps': precisionGps,
-      if (cantidadRecolectada != null)
-        'cantidad_recolectada': cantidadRecolectada,
-      'unidad_medida': unidadMedida,
+      // if (cantidadRecolectada != null)
+      //   'cantidad_recolectada': cantidadRecolectada,
+      // 'unidad_medida': unidadMedida,
       if (observacion != null) 'observacion': observacion,
       'clave_idempotencia': claveIdempotencia,
     };

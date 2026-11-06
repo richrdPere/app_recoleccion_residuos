@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-
-
 // Bloc
 import 'package:app_recoleccion_residuos/src/presentation/screens/bloc.dart';
 

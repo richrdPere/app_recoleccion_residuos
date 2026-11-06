@@ -12,7 +12,7 @@ abstract class GeolocatorRepository {
   Future<Resource<PermisoUbicacion>> verificarPermiso();
 
   /// 4. Solicita permiso de ubicación.
- Future<Resource<PermisoUbicacion>> solicitarPermiso();
+  Future<Resource<PermisoUbicacion>> solicitarPermiso();
 
   /// 5. Obtiene una posición actual.
   Future<Resource<UbicacionEntity>> obtenerUbicacionActual({

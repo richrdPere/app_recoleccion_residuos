@@ -38,11 +38,26 @@ class MapaRecorridoControles extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (context.watch<SessionBloc>().state.user?.esConductor != true) {
+      return const Card(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+
+          child: Text(
+            'Recolector: registra puntos y el resultado final '
+            'en Trabajo del equipo. '
+            'El conductor controla el inicio y cierre '
+            'del recorrido.',
+          ),
+        ),
+      );
+    }
+
     return BlocBuilder<RecorridoBloc, RecorridoState>(
       builder: (context, state) {
         final recorrido = state.recorridoActivo;
 
-        final estado =  recorrido?.estadoRecorrido.trim().toUpperCase();
+        final estado = recorrido?.estadoRecorrido.trim().toUpperCase();
 
         // Ajustar estos valores si tu backend usa otros nombres.
         final enCurso = estado == 'EN_CURSO';

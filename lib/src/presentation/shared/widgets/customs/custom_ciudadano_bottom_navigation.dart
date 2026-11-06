@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 // import 'package:app_recoleccion_residuos/src/presentation/screens/notificaciones/cubit/notificaciones_state.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 
-
-
 class CiudadanoBottomNavigation extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
